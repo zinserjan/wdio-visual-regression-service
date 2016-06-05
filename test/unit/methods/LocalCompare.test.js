@@ -3,20 +3,20 @@ import { assert } from 'chai';
 import { stub } from 'sinon';
 import fs from 'fs-promise';
 
-import compareImages from '../helper/compareImages';
+import compareImages from '../../helper/compareImages';
 
-import BaseCompare from '../../src/methods/BaseCompare';
-import LocalCompare from '../../src/methods/LocalCompare';
+import BaseCompare from '../../../src/methods/BaseCompare';
+import LocalCompare from '../../../src/methods/LocalCompare';
 
 const dirTmp = path.join(process.cwd(), '.tmp');
-const dirFixture = path.join(__dirname, '../fixture/');
+const dirFixture = path.join(__dirname, '../../fixture/');
 
 
 async function readAsBase64(file) {
-    // read binary data
-    const content = await fs.readFile(file);
-    // convert binary data to base64 encoded string
-    return new Buffer(content).toString('base64');
+  // read binary data
+  const content = await fs.readFile(file);
+  // convert binary data to base64 encoded string
+  return new Buffer(content).toString('base64');
 }
 
 

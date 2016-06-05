@@ -5,10 +5,12 @@ import { makeElementScreenshot, makeDocumentScreenshot, makeViewportScreenshot }
 import getUserAgent from './scripts/getUserAgent';
 import { mapWidths, mapOrientations } from './modules/mapViewports';
 
-import configuredMethod from './configured';
 
 export default class VisualRegressionLauncher {
 
+  async onPrepare(config) {
+    this.validateConfig(config);
+  }
 
   /**
    * Gets executed before test execution begins. At this point you can access
@@ -19,7 +21,9 @@ export default class VisualRegressionLauncher {
    * @return {Promise}
    */
   async before(capabilities, specs) {
-    this.method = configuredMethod;
+    this.validateConfig(browser.options);
+
+    this.compare = browser.options.visualRegression.compare;
     const userAgent = (await browser.execute(getUserAgent)).value;
     const { name, version, ua } = parsePlatform(userAgent);
 
@@ -62,8 +66,14 @@ export default class VisualRegressionLauncher {
   }
 
   async runHook(hookName, ...args) {
-    if (typeof this.method[hookName] === 'function') {
-      return await this.method[hookName](...args)
+    if (typeof this.compare[hookName] === 'function') {
+      return await this.compare[hookName](...args)
+    }
+  }
+
+  validateConfig(config) {
+    if(!_.isPlainObject(config.visualRegression) || !_.has(config.visualRegression, 'compare')) {
+      throw new Error('Please provide a visualRegression configuration with a compare method in your wdio-conf.js!');
     }
   }
 
@@ -84,7 +94,7 @@ export default class VisualRegressionLauncher {
     const resolutionKeyPlural = browser.isMobile ? 'orientations' : 'widths';
     const resolutionMap = browser.isMobile ? mapOrientations : mapWidths;
 
-    return async function async(testName, ...args) {
+    return async function async(...args) {
       const url = await browser.getUrl();
 
       const elementSelector = type === 'element' ? args[0] : undefined;

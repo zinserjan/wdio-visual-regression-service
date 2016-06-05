@@ -1,19 +1,19 @@
 export async function mapWidths(browser, widths = [], iteratee) {
   const results = [];
 
-    if (!widths.length) {
-      const { width } = await browser.windowHandleSize();
+  if (!widths.length) {
+    const { width } = await browser.windowHandleSize();
+    const result = await iteratee(width);
+    results.push(result);
+  } else {
+    for (let width of widths) {
+      await browser.windowHandleSize({width, height: 1000});
       const result = await iteratee(width);
       results.push(result);
-    } else {
-      for (let width of widths) {
-        await browser.windowHandleSize({width, height: 1000});
-        const result = await iteratee(width);
-        results.push(result);
-      }
     }
+  }
 
-    return results;
+  return results;
 }
 
 export async function mapOrientations(browser, orientations = [], iteratee) {
