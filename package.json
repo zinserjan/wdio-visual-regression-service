@@ -4,6 +4,9 @@
   "description": "Visual regression testing for WebdriverIO",
   "main": "index.js",
   "files": [
+    "index.js",
+    "compare.js",
+    "launcher.js",
     "*.md",
     "src",
     "lib"
