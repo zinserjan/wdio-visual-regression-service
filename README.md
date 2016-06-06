@@ -1,4 +1,4 @@
-# wdio-visual-regression-service [![Build Status][build-badge]][build]
+# wdio-visual-regression-service [![Build Status][build-badge]][build] [![npm package][npm-badge]][npm]
 
 > Visual regression testing with WebdriverIO.
 
@@ -91,3 +91,5 @@ MIT
 
 [build-badge]: https://travis-ci.org/zinserjan/wdio-visual-regression-service.svg?branch=master
 [build]: https://travis-ci.org/zinserjan/wdio-visual-regression-service
+[npm-badge]: https://img.shields.io/npm/v/wdio-visual-regression-service.svg?style=flat-square
+[npm]: https://www.npmjs.org/package/wdio-visual-regression-service
