@@ -178,6 +178,33 @@ describe('LocalCompare', function () {
       await compareImages(this.diffFile, path.join(dirFixture, 'image/100x100-diff.png'))
     });
 
+    it('deletes existing diff image when image is in tolerance now', async function () {
+      const base64ScreenshotReference = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
+      const base64ScreenshotNew = await readAsBase64(path.join(dirFixture, 'image/100x100-rotated.png'));
+
+      // 1st run -> create reference
+      await this.localCompare.afterScreenshot({}, base64ScreenshotReference);
+
+      // 2nd run --> create diff image
+      await this.localCompare.afterScreenshot({}, base64ScreenshotNew);
+
+      // check if diff image was created
+      let existsDiff = await fs.exists(this.diffFile);
+      assert.isTrue(existsDiff, 'Diff screenshot should exist');
+
+      // 3rd run --> update reference image & delete existing diff
+      const context = {
+        options: {
+            misMatchTolerance: 100,
+        }
+      };
+      await this.localCompare.afterScreenshot(context, base64ScreenshotNew);
+
+      // check if diff image was deleted
+      existsDiff = await fs.exists(this.diffFile);
+      assert.isFalse(existsDiff, 'Diff screenshot should no longer exist');
+    });
+
   });
 
 
