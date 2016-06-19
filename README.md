@@ -49,12 +49,40 @@ exports.config = {
       referenceName: getScreenshotName(path.join(process.cwd(), 'screenshots/reference')),
       screenshotName: getScreenshotName(path.join(process.cwd(), 'screenshots/screen')),
       diffName: getScreenshotName(path.join(process.cwd(), 'screenshots/diff')),
+      misMatchTolerance: 0.01,
     }),
   },
   // ...
 };
 ```
 
+### Options
+Under the key `visualRegression` in your wdio.config.js you can pass a configuration object with the following structure:
+
+* **compare** `Object` <br>
+  screenshot compare method, see [Compare Methods](#compare-methods)
+
+### Compare Methods
+wdio-visual-regression-service allows the usage of different screenshot comparison methods.
+
+#### VisualRegressionCompare.LocalCompare
+As it's name suggests *LocalCompare* captures screenshots locally on your computer and compares them against previous runs.
+
+You can pass the following options to it's constructor as object:
+
+* **referenceName** `Function` <br>
+pass in a function that returns the filename for the reference screenshot. Function receives a *context* object as first parameter with all relevant information about the command.
+
+* **screenshotName** `Function` <br>
+pass in a function that returns the filename for the current screenshot. Function receives a *context* object as first parameter with all relevant information about the command.
+
+* **diffName** `Function` <br>
+pass in a function that returns the filename for the diff screenshot. Function receives a *context* object as first parameter with all relevant information about the command.
+
+* **misMatchTolerance** `Number`  ( default: 0.01 ) <br>
+number between 0 and 100 that defines the degree of mismatch to consider two images as identical, increasing this value will decrease test coverage.
+
+For an example of generating screenshot filesnames dependent on the current test name, have a look at the sample code of [Configuration](#configuration).
 
 ## Usage
 wdio-visual-regression-service enhances an WebdriverIO instance with the following commands:
@@ -83,6 +111,8 @@ available:
 * **orientations** `String[] {landscape, portrait}`  ( default: *[current-orientation]* ) (**mobile only**)<br>
     all screenshots will be taken in different screen orientations (e.g. for responsive design tests)
 
+* **misMatchTolerance** `Number` <br>
+    Overrides the global *misMatchTolerance* value for this command. Pass in a number between 0 and 100 that defines the degree of mismatch to consider two images as identical,
 
 ### License
 
