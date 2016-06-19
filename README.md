@@ -51,6 +51,7 @@ exports.config = {
       diffName: getScreenshotName(path.join(process.cwd(), 'screenshots/diff')),
       misMatchTolerance: 0.01,
     }),
+    viewportChangePause: 300
   },
   // ...
 };
@@ -60,7 +61,10 @@ exports.config = {
 Under the key `visualRegression` in your wdio.config.js you can pass a configuration object with the following structure:
 
 * **compare** `Object` <br>
-  screenshot compare method, see [Compare Methods](#compare-methods)
+screenshot compare method, see [Compare Methods](#compare-methods)
+
+* **viewportChangePause**  `Number`  ( default: 100 ) <br>
+wait x milliseconds after viewport change. It can take a while for the browser to re-paint. This could lead to rendering issues and produces inconsistent results between runs.
 
 ### Compare Methods
 wdio-visual-regression-service allows the usage of different screenshot comparison methods.
@@ -113,6 +117,9 @@ available:
 
 * **misMatchTolerance** `Number` <br>
     Overrides the global *misMatchTolerance* value for this command. Pass in a number between 0 and 100 that defines the degree of mismatch to consider two images as identical,
+
+* **viewportChangePause**  `Number` <br>
+    Overrides the global *viewportChangePause* value for this command. Wait x milliseconds after viewport change.
 
 ### License
 

@@ -24,6 +24,7 @@ export default class VisualRegressionLauncher {
     this.validateConfig(browser.options);
 
     this.compare = browser.options.visualRegression.compare;
+    this.viewportChangePause = _.get(browser.options, 'visualRegression.viewportChangePause', 100);
     const userAgent = (await browser.execute(getUserAgent)).value;
     const { name, version, ua } = parsePlatform(userAgent);
 
@@ -94,6 +95,8 @@ export default class VisualRegressionLauncher {
     const resolutionKeyPlural = browser.isMobile ? 'orientations' : 'widths';
     const resolutionMap = browser.isMobile ? mapOrientations : mapWidths;
 
+    const viewportChangePauseDefault = this.viewportChangePause;
+
     return async function async(...args) {
       const url = await browser.getUrl();
 
@@ -109,8 +112,9 @@ export default class VisualRegressionLauncher {
       } = options;
 
       const resolutions = options[resolutionKeyPlural];
+      const viewportChangePause = _.get(options, 'viewportChangePause', viewportChangePauseDefault);
 
-      const results = await resolutionMap(browser, resolutions, async function(resolution) {
+      const results = await resolutionMap(browser, viewportChangePause, resolutions, async function(resolution) {
         const meta = _.pickBy({
           url,
           element: elementSelector,

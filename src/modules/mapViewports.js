@@ -1,4 +1,4 @@
-export async function mapWidths(browser, widths = [], iteratee) {
+export async function mapWidths(browser, delay, widths = [], iteratee) {
   const results = [];
 
   if (!widths.length) {
@@ -8,6 +8,7 @@ export async function mapWidths(browser, widths = [], iteratee) {
   } else {
     for (let width of widths) {
       await browser.windowHandleSize({width, height: 1000});
+      await browser.pause(delay);
       const result = await iteratee(width);
       results.push(result);
     }
@@ -16,7 +17,7 @@ export async function mapWidths(browser, widths = [], iteratee) {
   return results;
 }
 
-export async function mapOrientations(browser, orientations = [], iteratee) {
+export async function mapOrientations(browser, delay, orientations = [], iteratee) {
   const results = [];
 
   if (!orientations.length) {
@@ -26,6 +27,7 @@ export async function mapOrientations(browser, orientations = [], iteratee) {
   } else {
     for (let orientation of orientations) {
       await browser.setOrientation(orientation);
+      await browser.pause(delay);
       const result = await iteratee(orientation);
       results.push(result);
     }
