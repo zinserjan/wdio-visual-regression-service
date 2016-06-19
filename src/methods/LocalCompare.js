@@ -34,8 +34,9 @@ export default class LocalCompare extends BaseCompare {
       const misMatchPercentage = Number(compareData.misMatchPercentage);
       const misMatchTolerance = _.get(context, 'options.misMatchTolerance', this.misMatchTolerance);
 
+      const diffPath = this.getDiffFile(context);
+
       if (misMatchPercentage > misMatchTolerance) {
-        const diffPath = this.getDiffFile(context);
         log(`Image is different! ${misMatchPercentage}%`);
         const png = compareData.getDiffImage().pack();
         await this.writeDiff(png, diffPath);
@@ -44,6 +45,7 @@ export default class LocalCompare extends BaseCompare {
       } else {
         log(`Image is within tolerance or the same. Updating base image`);
         await fs.outputFile(referencePath, base64Screenshot, 'base64');
+        await fs.remove(diffPath);
 
         return this.createResultReport(misMatchPercentage, true, isSameDimensions);
       }
