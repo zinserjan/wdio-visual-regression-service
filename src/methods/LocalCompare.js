@@ -2,6 +2,7 @@ import fs from 'fs-promise';
 import resemble from 'node-resemble-js';
 import BaseCompare from './BaseCompare';
 import debug from 'debug';
+import _ from 'lodash';
 
 const log = debug('wdio-visual-regression-service:LocalCompare');
 
@@ -12,6 +13,7 @@ export default class LocalCompare extends BaseCompare {
     this.getScreenshotFile = options.screenshotName;
     this.getReferencefile = options.referenceName;
     this.getDiffFile = options.diffName;
+    this.misMatchTolerance = _.get(options, 'misMatchTolerance', 0.01);
   }
 
   async afterScreenshot(context, base64Screenshot) {
@@ -30,8 +32,9 @@ export default class LocalCompare extends BaseCompare {
 
       const { isSameDimensions } = compareData;
       const misMatchPercentage = Number(compareData.misMatchPercentage);
+      const misMatchTolerance = _.get(context, 'options.misMatchTolerance', this.misMatchTolerance);
 
-      if (misMatchPercentage > 0.01) {
+      if (misMatchPercentage > misMatchTolerance) {
         const diffPath = this.getDiffFile(context);
         log(`Image is different! ${misMatchPercentage}%`);
         const png = compareData.getDiffImage().pack();

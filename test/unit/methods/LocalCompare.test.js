@@ -22,6 +22,13 @@ async function readAsBase64(file) {
 
 
 describe('LocalCompare', function () {
+  beforeEach(async function () {
+    await fs.remove(dirTmp);
+  });
+
+  after(async function () {
+    await fs.remove(dirTmp);
+  });
 
   it('creates a instance of BaseCompare', async function () {
     const localCompare = new LocalCompare();
@@ -30,8 +37,6 @@ describe('LocalCompare', function () {
 
   context('afterScreenshot', function () {
     beforeEach(async function() {
-      await fs.remove(dirTmp);
-
       this.screenshotFile = path.join(dirTmp, 'screenshot.png');
       this.referencFile = path.join(dirTmp, 'reference.png');
       this.diffFile = path.join(dirTmp, 'diff.png');
@@ -52,10 +57,6 @@ describe('LocalCompare', function () {
         isSameDimensions: true,
         isExactSameImage: true
       };
-    });
-
-    after(async function () {
-      await fs.remove(dirTmp);
     });
 
     it('creates the captured screenshot', async function () {
@@ -171,14 +172,185 @@ describe('LocalCompare', function () {
 
       // check if diff image was created
       const existsDiff = await fs.exists(this.diffFile);
-      assert.isTrue(existsReference, 'Diff screenshot should exists');
+      assert.isTrue(existsDiff, 'Diff screenshot should exists');
 
       // check if diff is correct
       await compareImages(this.diffFile, path.join(dirFixture, 'image/100x100-diff.png'))
     });
 
-
   });
 
 
+  context('misMatchTolerance', function () {
+    before(async function () {
+      this.screenshotBase = await readAsBase64(path.join(dirFixture, 'misMatchTolerance/base.png'));
+
+      this.screenshotToleranceDefaultWithin = await readAsBase64(path.join(dirFixture, 'misMatchTolerance/default-within.png'));
+      this.screenshotToleranceDefaultOutside = await readAsBase64(path.join(dirFixture, 'misMatchTolerance/default-outside.png'));
+
+      this.screenshotToleranceCustomWithin = await readAsBase64(path.join(dirFixture, 'misMatchTolerance/custom-within.png'));
+      this.screenshotToleranceCustomOutside = await readAsBase64(path.join(dirFixture, 'misMatchTolerance/custom-outside.png'));
+
+    });
+
+    beforeEach(async function () {
+      this.screenshotFile = path.join(dirTmp, 'screenshot.png');
+      this.referencFile = path.join(dirTmp, 'reference.png');
+      this.diffFile = path.join(dirTmp, 'diff.png');
+
+      this.getScreenshotFile = stub().returns(this.screenshotFile);
+      this.getReferenceFile = stub().returns(this.referencFile);
+      this.getDiffFile = stub().returns(this.diffFile);
+    });
+
+
+    context('uses default misMatchTolerance', function () {
+      beforeEach(async function () {
+        this.misMatchTolerance = 0.01;
+        this.context = {};
+
+        this.localCompare = new LocalCompare({
+          screenshotName: this.getScreenshotFile,
+          referenceName: this.getReferenceFile,
+          diffName: this.getDiffFile,
+        });
+
+        // 1st run -> create reference
+        const resultFirst = await this.localCompare.afterScreenshot({}, this.screenshotBase);
+
+        // check if reference was created
+        const existsReference = await fs.exists(this.screenshotFile);
+        assert.isTrue(existsReference, 'Captured screenshot should exist');
+      });
+
+      it('reports equal when in tolerance', async function () {
+        // compare screenshots
+        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotToleranceDefaultWithin);
+
+        // check diff results
+        assert.isAtMost(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
+        assert.isFalse(result.isExactSameImage, 'Images should diff');
+        assert.isTrue(result.isWithinMisMatchTolerance, 'Diff should be in tolerance');
+
+        // check if diff image was not created
+        const existsDiff = await fs.exists(this.diffFile);
+        assert.isFalse(existsDiff, 'Diff screenshot should not exist');
+      });
+
+      it('reports diff when NOT in tolerance', async function () {
+        // compare screenshots
+        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotToleranceDefaultOutside);
+
+        // check diff results
+        assert.isAbove(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
+        assert.isFalse(result.isExactSameImage, 'Images should diff');
+        assert.isFalse(result.isWithinMisMatchTolerance, 'Images should be marked as diff');
+
+        // check if diff image was created
+        const existsDiff = await fs.exists(this.diffFile);
+        assert.isTrue(existsDiff, 'Diff screenshot should exist');
+      });
+    });
+
+    context('uses custom misMatchTolerance passed in constructor option', function () {
+      beforeEach(async function () {
+        this.misMatchTolerance = 0.25;
+        this.context = {};
+
+        this.localCompare = new LocalCompare({
+          screenshotName: this.getScreenshotFile,
+          referenceName: this.getReferenceFile,
+          diffName: this.getDiffFile,
+          misMatchTolerance: this.misMatchTolerance,
+        });
+
+        // 1st run -> create reference
+        const resultFirst = await this.localCompare.afterScreenshot({}, this.screenshotBase);
+
+        // check if reference was created
+        const existsReference = await fs.exists(this.screenshotFile);
+        assert.isTrue(existsReference, 'Captured screenshot should exist');
+      });
+
+      it('reports equal when in tolerance', async function () {
+        // compare screenshots
+        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotToleranceCustomWithin);
+
+        // check diff results
+        assert.isAtMost(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
+        assert.isFalse(result.isExactSameImage, 'Images should diff');
+        assert.isTrue(result.isWithinMisMatchTolerance, 'Diff should be in tolerance');
+
+        // check if diff image was not created
+        const existsDiff = await fs.exists(this.diffFile);
+        assert.isFalse(existsDiff, 'Diff screenshot should not exist');
+      });
+
+      it('reports diff when NOT in tolerance', async function () {
+        // compare screenshots
+        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotToleranceCustomOutside);
+
+        // check diff results
+        assert.isAbove(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
+        assert.isFalse(result.isExactSameImage, 'Images should diff');
+        assert.isFalse(result.isWithinMisMatchTolerance, 'Images should be marked as diff');
+
+        // check if diff image was created
+        const existsDiff = await fs.exists(this.diffFile);
+        assert.isTrue(existsDiff, 'Diff screenshot should exist');
+      });
+    });
+
+    context('uses custom misMatchTolerance passed in command options', function () {
+      beforeEach(async function () {
+        this.misMatchTolerance = 0.25;
+        this.context = {
+          options: {
+            misMatchTolerance: this.misMatchTolerance,
+          }
+        };
+
+        this.localCompare = new LocalCompare({
+          screenshotName: this.getScreenshotFile,
+          referenceName: this.getReferenceFile,
+          diffName: this.getDiffFile,
+        });
+
+        // 1st run -> create reference
+        const resultFirst = await this.localCompare.afterScreenshot({}, this.screenshotBase);
+
+        // check if reference was created
+        const existsReference = await fs.exists(this.screenshotFile);
+        assert.isTrue(existsReference, 'Captured screenshot should exist');
+      });
+
+      it('reports equal when in tolerance', async function () {
+        // compare screenshots
+        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotToleranceCustomWithin);
+
+        // check diff results
+        assert.isAtMost(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
+        assert.isFalse(result.isExactSameImage, 'Images should diff');
+        assert.isTrue(result.isWithinMisMatchTolerance, 'Diff should be in tolerance');
+
+        // check if diff image was not created
+        const existsDiff = await fs.exists(this.diffFile);
+        assert.isFalse(existsDiff, 'Diff screenshot should not exist');
+      });
+
+      it('reports diff when NOT in tolerance', async function () {
+        // compare screenshots
+        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotToleranceCustomOutside);
+
+        // check diff results
+        assert.isAbove(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
+        assert.isFalse(result.isExactSameImage, 'Images should diff');
+        assert.isFalse(result.isWithinMisMatchTolerance, 'Images should be marked as diff');
+
+        // check if diff image was created
+        const existsDiff = await fs.exists(this.diffFile);
+        assert.isTrue(existsDiff, 'Diff screenshot should exist');
+      });
+    });
+  });
 });
