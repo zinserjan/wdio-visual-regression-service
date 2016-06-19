@@ -34,5 +34,6 @@ exports.config = {
   ],
   visualRegression: {
     compare: compareMethod,
+    viewportChangePause: 250
   }
 }

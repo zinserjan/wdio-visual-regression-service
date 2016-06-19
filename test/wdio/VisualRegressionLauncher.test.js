@@ -1,6 +1,6 @@
 import path from 'path';
 import { assert } from 'chai';
-import { stub } from 'sinon';
+import { stub, spy } from 'sinon';
 
 import { config } from './wdio.config';
 import * as compareStubs from '../helper/compareMethod';
@@ -157,7 +157,7 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     assert.isTrue(this.beforeScreenshotStub.notCalled);
 
     const options = {};
-    await browser.checkDocument('test');
+    await browser.checkDocument();
 
     assert.isTrue(this.beforeScreenshotStub.calledBefore(this.afterScreenshotStub));
 
@@ -178,7 +178,7 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     assert.isTrue(this.afterScreenshotStub.notCalled);
 
     const options = {};
-    const results = await browser.checkDocument('test');
+    const results = await browser.checkDocument();
 
     assert.isTrue(this.afterScreenshotStub.calledAfter(this.beforeScreenshotStub));
 
@@ -206,7 +206,7 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     this.afterScreenshotStub.returns(expectedResult);
 
     const options = {};
-    const results = await browser.checkDocument('test');
+    const results = await browser.checkDocument();
 
     assert.isArray(results, 'results should be an array of results');
     assert.lengthOf(results, 1);
@@ -216,7 +216,37 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     assert.strictEqual(result, expectedResult);
   });
 
+  context('viewportChangePause', function () {
 
+    beforeEach(function () {
+      spy(browser, 'pause');
+      spy(browser, 'windowHandleSize');
+    });
+
+    afterEach(function () {
+      browser.pause.restore();
+      browser.windowHandleSize.restore();
+    });
+
+    it('uses a custom delay passed in constructor options', async function () {
+      await browser.checkViewport({
+        widths: [500],
+      });
+
+      assert.isTrue(browser.pause.calledAfter(browser.windowHandleSize), 'browser.pause should have been after windowHandleSize');
+      assert.isTrue(browser.pause.calledWith(250), 'browser.pause should have been called called with 250');
+    });
+
+    it('uses a custom delay passed in command options', async function () {
+      await browser.checkViewport({
+        widths: [500],
+        viewportChangePause: 1500,
+      });
+
+      assert.isTrue(browser.pause.calledAfter(this.beforeScreenshotStub), 'browser.pause should have been called after windowHandleSize');
+      assert.isTrue(browser.pause.calledWith(1500), 'browser.pause should have been called with 1500');
+    });
+  });
 
   // it('calls after hook', async function () {
   //   // NOTE: can not test this, cause this will be executed after tests..
