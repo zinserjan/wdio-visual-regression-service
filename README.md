@@ -7,10 +7,7 @@
 
 wdio-visual-regression-service uses [wdio-screenshot](https://github.com/zinserjan/wdio-screenshot) for capturing screenhots.
 
-As [wdio-screenshot](https://github.com/zinserjan/wdio-screenshot) depends on [GraphicsMagick](http://www.graphicsmagick.org/) you have to install GraphicsMagick before you can use this. For installation instructions please read the [installation section](https://github.com/zinserjan/wdio-screenshot#installation) of wdio-screenshot.
-
-
-After these dependencies are installed you can install wdio-screenshot via NPM as usual:
+You can install wdio-visual-regression-service via NPM as usual:
 
 ```sh
 $ npm install wdio-visual-regression-service --save-dev
