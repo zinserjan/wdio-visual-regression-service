@@ -248,6 +248,36 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     });
   });
 
+  context('widths', function () {
+
+    beforeEach(function () {
+      spy(browser, 'windowHandleSize');
+    });
+
+    afterEach(function () {
+      browser.windowHandleSize.restore();
+    });
+
+    it('uses width passed in constructor options', async function () {
+      const expectedWidth = browser.options.visualRegression.widths[0];
+      await browser.checkViewport();
+
+      const { width } = browser.windowHandleSize.args[0][0];
+      assert.strictEqual(width, expectedWidth, 'browser.windowHandleSize should have been called with global value');
+    });
+
+    it('uses a custom width passed in command options', async function () {
+      const expectedWidth = 500;
+
+      await browser.checkViewport({
+        widths: [expectedWidth],
+      });
+
+      const { width } = browser.windowHandleSize.args[0][0];
+      assert.strictEqual(width, expectedWidth, 'browser.windowHandleSize should have been called with custom value');
+    });
+  });
+
   // it('calls after hook', async function () {
   //   // NOTE: can not test this, cause this will be executed after tests..
   //   assert.isTrue(this.afterStub.calledOnce, 'after hook should be called once');

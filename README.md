@@ -49,7 +49,9 @@ exports.config = {
       diffName: getScreenshotName(path.join(process.cwd(), 'screenshots/diff')),
       misMatchTolerance: 0.01,
     }),
-    viewportChangePause: 300
+    viewportChangePause: 300,
+    widths: [320, 480, 640, 1024],
+    orientations: ['landscape', 'portrait'],
   },
   // ...
 };
@@ -63,6 +65,12 @@ screenshot compare method, see [Compare Methods](#compare-methods)
 
 * **viewportChangePause**  `Number`  ( default: 100 ) <br>
 wait x milliseconds after viewport change. It can take a while for the browser to re-paint. This could lead to rendering issues and produces inconsistent results between runs.
+
+* **widths** `Number[]`  ( default: *[current-width]* ) (**desktop only**)<br>
+   all screenshots will be taken in different screen widths (e.g. for responsive design tests)
+
+* **orientations** `String[] {landscape, portrait}`  ( default: *[current-orientation]* ) (**mobile only**)<br>
+    all screenshots will be taken in different screen orientations (e.g. for responsive design tests)
 
 ### Compare Methods
 wdio-visual-regression-service allows the usage of different screenshot comparison methods.
@@ -107,11 +115,11 @@ available:
 * **remove** `String[]`<br>
   removes all elements queried by all kinds of different [WebdriverIO selector strategies](http://webdriver.io/guide/usage/selectors.html) (via `display: none`)
 
-* **widths** `Number[]`  ( default: *[current-width]* ) (**desktop only**)<br>
-   all screenshots will be taken in different screen widths (e.g. for responsive design tests)
+* **widths** `Number[]` (**desktop only**)<br>
+     Overrides the global *widths* value for this command. All screenshots will be taken in different screen widths (e.g. for responsive design tests)
 
-* **orientations** `String[] {landscape, portrait}`  ( default: *[current-orientation]* ) (**mobile only**)<br>
-    all screenshots will be taken in different screen orientations (e.g. for responsive design tests)
+* **orientations** `String[] {landscape, portrait}` (**mobile only**)<br>
+    Overrides the global *orientations* value for this command. All screenshots will be taken in different screen orientations (e.g. for responsive design tests)
 
 * **misMatchTolerance** `Number` <br>
     Overrides the global *misMatchTolerance* value for this command. Pass in a number between 0 and 100 that defines the degree of mismatch to consider two images as identical,
