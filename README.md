@@ -18,6 +18,7 @@ $ npm install wdio-visual-regression-service --save-dev
 
 Instructions on how to install `WebdriverIO` can be found [here.](http://webdriver.io/guide/getstarted/install.html)
 
+An example repository using the wdio-visual-regression service can be found [here.](https://github.com/zinserjan/webdriverio-example)
 
 ## Configuration
 Setup wdio-visual-regression-service by adding `visual-regression` to the service section of your WebdriverIO config and define your desired comparison strategy in `visualRegression`.
