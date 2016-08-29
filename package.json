@@ -1,6 +1,6 @@
 {
   "name": "wdio-visual-regression-service",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Visual regression testing for WebdriverIO",
   "main": "index.js",
   "files": [
