@@ -2,12 +2,12 @@ export async function mapWidths(browser, delay, widths = [], iteratee) {
   const results = [];
 
   if (!widths.length) {
-    const { width } = await browser.windowHandleSize();
+    const {width} = await browser.getViewportSize();
     const result = await iteratee(width);
     results.push(result);
   } else {
     for (let width of widths) {
-      await browser.windowHandleSize({width, height: 1000});
+      await browser.setViewportSize({width, height: 1000});
       await browser.pause(delay);
       const result = await iteratee(width);
       results.push(result);

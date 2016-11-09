@@ -220,12 +220,12 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
 
     beforeEach(function () {
       spy(browser, 'pause');
-      spy(browser, 'windowHandleSize');
+      spy(browser, 'setViewportSize');
     });
 
     afterEach(function () {
       browser.pause.restore();
-      browser.windowHandleSize.restore();
+      browser.setViewportSize.restore();
     });
 
     it('uses a custom delay passed in constructor options', async function () {
@@ -233,7 +233,7 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
         widths: [500],
       });
 
-      assert.isTrue(browser.pause.calledAfter(browser.windowHandleSize), 'browser.pause should have been after windowHandleSize');
+      assert.isTrue(browser.pause.calledAfter(browser.setViewportSize), 'browser.pause should have been after setViewportSize');
       assert.isTrue(browser.pause.calledWith(250), 'browser.pause should have been called called with 250');
     });
 
@@ -243,7 +243,7 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
         viewportChangePause: 1500,
       });
 
-      assert.isTrue(browser.pause.calledAfter(this.beforeScreenshotStub), 'browser.pause should have been called after windowHandleSize');
+      assert.isTrue(browser.pause.calledAfter(browser.setViewportSize), 'browser.pause should have been called after setViewportSize');
       assert.isTrue(browser.pause.calledWith(1500), 'browser.pause should have been called with 1500');
     });
   });
@@ -251,19 +251,19 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
   context('widths', function () {
 
     beforeEach(function () {
-      spy(browser, 'windowHandleSize');
+      spy(browser, 'setViewportSize');
     });
 
     afterEach(function () {
-      browser.windowHandleSize.restore();
+      browser.setViewportSize.restore();
     });
 
     it('uses width passed in constructor options', async function () {
       const expectedWidth = browser.options.visualRegression.widths[0];
       await browser.checkViewport();
 
-      const { width } = browser.windowHandleSize.args[0][0];
-      assert.strictEqual(width, expectedWidth, 'browser.windowHandleSize should have been called with global value');
+      const { width } = browser.setViewportSize.args[0][0];
+      assert.strictEqual(width, expectedWidth, 'browser.setViewportSize should have been called with global value');
     });
 
     it('uses a custom width passed in command options', async function () {
@@ -273,8 +273,8 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
         widths: [expectedWidth],
       });
 
-      const { width } = browser.windowHandleSize.args[0][0];
-      assert.strictEqual(width, expectedWidth, 'browser.windowHandleSize should have been called with custom value');
+      const { width } = browser.setViewportSize.args[0][0];
+      assert.strictEqual(width, expectedWidth, 'browser.setViewportSize should have been called with custom value');
     });
   });
 
