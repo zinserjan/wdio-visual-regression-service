@@ -57,6 +57,7 @@
     "rimraf": "^2.5.2",
     "sinon": "^1.17.4",
     "wdio-mocha-framework": "^0.3.1",
+    "wdio-selenium-standalone-service": "0.0.7",
     "webdriverio": "^4.0.9"
   }
 }

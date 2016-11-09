@@ -8,9 +8,12 @@ exports.config = {
   specs: [
     path.join(__dirname, '*.test.js')
   ],
-  capabilities: [{
-    browserName: 'phantom'
-  }],
+  capabilities: [
+    {
+      browserName: 'phantomjs',
+      'phantomjs.binary.path': require('phantomjs').path,
+    }
+  ],
   sync: false,
   logLevel: 'silent',
   coloredLogs: true,
@@ -30,11 +33,15 @@ exports.config = {
     ],
   },
   services: [
+    'selenium-standalone',
     require('../../src')
   ],
   visualRegression: {
     compare: compareMethod,
     viewportChangePause: 250,
     widths: [600],
-  }
+  },
+  // Options for selenium-standalone
+  // Path where all logs from the Selenium server should be stored.
+  seleniumLogs: './logs/',
 }
