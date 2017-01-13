@@ -43,8 +43,7 @@ export default class LocalCompare extends BaseCompare {
 
         return this.createResultReport(misMatchPercentage, false, isSameDimensions);
       } else {
-        log(`Image is within tolerance or the same. Updating base image`);
-        await fs.outputFile(referencePath, base64Screenshot, 'base64');
+        log(`Image is within tolerance or the same`);
         await fs.remove(diffPath);
 
         return this.createResultReport(misMatchPercentage, true, isSameDimensions);
