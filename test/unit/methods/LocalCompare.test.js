@@ -93,7 +93,7 @@ describe('LocalCompare', function () {
 
     });
 
-    it('updates the reference image when changes are in tolerance', async function () {
+    it('does not update the reference image when changes are in tolerance', async function () {
       const context = {};
       const base64Screenshot = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
 
@@ -115,7 +115,7 @@ describe('LocalCompare', function () {
       const statsFirst = await fs.stat(this.referencFile);
       assert.isAbove(statsFirst.mtime.getTime(), 0);
 
-      // 2nd run --> update reference image
+      // 2nd run --> go against reference image
       const resultSecond = await this.localCompare.afterScreenshot(context, base64Screenshot);
 
       // check reference getter
@@ -125,9 +125,9 @@ describe('LocalCompare', function () {
       // check if image is reported as same
       assert.deepEqual(resultSecond, this.resultIdentical, 'Result should be reported');
 
-      // check if reference was updated
+      // check that reference was not updated
       const statsSecond = await fs.stat(this.referencFile);
-      assert.isAbove(statsSecond.mtime.getTime(), statsFirst.mtime.getTime(), 'File should be modified');
+      assert.strictEqual(statsSecond.mtime.getTime(), statsFirst.mtime.getTime(), 'File should not be modified');
     });
 
     it('creates a diff image when changes are not in tolerance', async function () {
@@ -192,7 +192,7 @@ describe('LocalCompare', function () {
       let existsDiff = await fs.exists(this.diffFile);
       assert.isTrue(existsDiff, 'Diff screenshot should exist');
 
-      // 3rd run --> update reference image & delete existing diff
+      // 3rd run --> delete existing diff
       const context = {
         options: {
             misMatchTolerance: 100,
