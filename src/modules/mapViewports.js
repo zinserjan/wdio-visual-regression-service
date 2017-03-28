@@ -1,15 +1,15 @@
-export async function mapWidths(browser, delay, widths = [], iteratee) {
+export async function mapViewports(browser, delay, viewports = [], iteratee) {
   const results = [];
 
-  if (!widths.length) {
-    const {width} = await browser.getViewportSize();
-    const result = await iteratee(width);
+  if (!viewports.length) {
+    const viewport = await browser.getViewportSize();
+    const result = await iteratee(viewport);
     results.push(result);
   } else {
-    for (let width of widths) {
-      await browser.setViewportSize({width, height: 1000});
+    for (let viewport of viewports) {
+      await browser.setViewportSize(viewport);
       await browser.pause(delay);
-      const result = await iteratee(width);
+      const result = await iteratee(viewport);
       results.push(result);
     }
   }

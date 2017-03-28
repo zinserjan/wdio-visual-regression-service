@@ -3,7 +3,7 @@ import { parse as parsePlatform } from 'platform';
 import { makeElementScreenshot, makeDocumentScreenshot, makeViewportScreenshot } from 'wdio-screenshot';
 
 import getUserAgent from './scripts/getUserAgent';
-import { mapWidths, mapOrientations } from './modules/mapViewports';
+import { mapViewports, mapOrientations } from './modules/mapViewports';
 
 
 export default class VisualRegressionLauncher {
@@ -25,7 +25,7 @@ export default class VisualRegressionLauncher {
 
     this.compare = browser.options.visualRegression.compare;
     this.viewportChangePause = _.get(browser.options, 'visualRegression.viewportChangePause', 100);
-    this.widths = _.get(browser.options, 'visualRegression.widths');
+    this.viewports = _.get(browser.options, 'visualRegression.viewports');
     this.orientations = _.get(browser.options, 'visualRegression.orientations');
     const userAgent = (await browser.execute(getUserAgent)).value;
     const { name, version, ua } = parsePlatform(userAgent);
@@ -93,12 +93,12 @@ export default class VisualRegressionLauncher {
       return _.pick(this.currentTest, ['title', 'parent', 'file']);
     };
 
-    const resolutionKeySingle = browser.isMobile ? 'orientation' : 'width';
-    const resolutionKeyPlural = browser.isMobile ? 'orientations' : 'widths';
-    const resolutionMap = browser.isMobile ? mapOrientations : mapWidths;
+    const resolutionKeySingle = browser.isMobile ? 'orientation' : 'viewport';
+    const resolutionKeyPlural = browser.isMobile ? 'orientations' : 'viewports';
+    const resolutionMap = browser.isMobile ? mapOrientations : mapViewports;
 
     const viewportChangePauseDefault = this.viewportChangePause;
-    const resolutionDefault = browser.isMobile ? this.orientations : this.widths;
+    const resolutionDefault = browser.isMobile ? this.orientations : this.viewports;
 
     return async function async(...args) {
       const url = await browser.getUrl();
@@ -110,8 +110,6 @@ export default class VisualRegressionLauncher {
         exclude,
         hide,
         remove,
-        widths,
-        orientations
       } = options;
 
       const resolutions = _.get(options, resolutionKeyPlural, resolutionDefault);

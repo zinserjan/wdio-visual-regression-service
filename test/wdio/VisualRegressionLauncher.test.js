@@ -96,9 +96,9 @@ function assertMeta(meta, type, options) {
     assert.strictEqual(meta.remove, options.remove);
   }
 
-  if (typeof options.widths !== 'undefined') {
-    assert.property(meta, 'width');
-    assert.oneOf(meta.width, options.widths);
+  if (typeof options.viewports !== 'undefined') {
+    assert.property(meta, 'viewport');
+    assert.oneOf(meta.viewport, options.viewports);
   }
 
   if (typeof options.orientations !== 'undefined') {
@@ -230,7 +230,7 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
 
     it('uses a custom delay passed in constructor options', async function () {
       await browser.checkViewport({
-        widths: [500],
+        viewports: [{ width: 500, height: 1000 }],
       });
 
       assert.isTrue(browser.pause.calledAfter(browser.setViewportSize), 'browser.pause should have been after setViewportSize');
@@ -239,7 +239,7 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
 
     it('uses a custom delay passed in command options', async function () {
       await browser.checkViewport({
-        widths: [500],
+        viewports: [{ width: 500, height: 1000 }],
         viewportChangePause: 1500,
       });
 
@@ -248,7 +248,7 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     });
   });
 
-  context('widths', function () {
+  context('viewports', function () {
 
     beforeEach(function () {
       spy(browser, 'setViewportSize');
@@ -258,23 +258,23 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
       browser.setViewportSize.restore();
     });
 
-    it('uses width passed in constructor options', async function () {
-      const expectedWidth = browser.options.visualRegression.widths[0];
+    it('uses viewport passed in constructor options', async function () {
+      const expectedViewport = browser.options.visualRegression.viewports[0];
       await browser.checkViewport();
 
-      const { width } = browser.setViewportSize.args[0][0];
-      assert.strictEqual(width, expectedWidth, 'browser.setViewportSize should have been called with global value');
+      const viewport = browser.setViewportSize.args[0][0];
+      assert.deepEqual(viewport, expectedViewport, 'browser.setViewportSize should have been called with global value');
     });
 
-    it('uses a custom width passed in command options', async function () {
-      const expectedWidth = 500;
+    it('uses a custom viewport passed in command options', async function () {
+      const expectedViewport = { width: 500, height: 600 };
 
       await browser.checkViewport({
-        widths: [expectedWidth],
+        viewports: [expectedViewport],
       });
 
-      const { width } = browser.setViewportSize.args[0][0];
-      assert.strictEqual(width, expectedWidth, 'browser.setViewportSize should have been called with custom value');
+      const viewport = browser.setViewportSize.args[0][0];
+      assert.deepEqual(viewport, expectedViewport, 'browser.setViewportSize should have been called with custom value');
     });
   });
 

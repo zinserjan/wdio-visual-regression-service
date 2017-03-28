@@ -39,7 +39,7 @@ exports.config = {
   visualRegression: {
     compare: compareMethod,
     viewportChangePause: 250,
-    widths: [600],
+    viewports: [{ width: 600, height: 1000 }],
   },
   // Options for selenium-standalone
   // Path where all logs from the Selenium server should be stored.
