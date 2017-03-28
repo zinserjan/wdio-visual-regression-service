@@ -97,7 +97,7 @@ describe('SaveScreenshot', function () {
       assert.isAbove(statsFirst.mtime.getTime(), 0);
 
       // wait to get a different last modified time
-      await pause(100);
+      await pause(1000);
 
       // 2nd run --> update reference image
       const resultSecond = await this.saveScreenshot.afterScreenshot(context, base64Screenshot);
@@ -138,7 +138,7 @@ describe('SaveScreenshot', function () {
       assert.isAbove(statsFirst.mtime.getTime(), 0);
 
       // wait to get a different last modified time
-      await pause(100);
+      await pause(1000);
 
       // 2nd run --> update refernece with diff image
       const resultSecond = await this.saveScreenshot.afterScreenshot(context, base64ScreenshotNew);
