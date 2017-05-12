@@ -1,7 +1,7 @@
 import path from 'path';
 import { assert } from 'chai';
 import { stub } from 'sinon';
-import fs from 'fs-promise';
+import fs from 'fs-extra';
 
 import BaseCompare from '../../../src/methods/BaseCompare';
 import SaveScreenshot from '../../../src/methods/SaveScreenshot';
