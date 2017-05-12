@@ -1,4 +1,4 @@
-import fs from 'fs-promise';
+import fs from 'fs-extra';
 import resemble from 'node-resemble-js';
 import BaseCompare from './BaseCompare';
 import debug from 'debug';
