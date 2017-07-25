@@ -89,9 +89,7 @@ export default class VisualRegressionLauncher {
 
     const runHook = this.runHook.bind(this);
 
-    const getTest = () => {
-      return _.pick(this.currentTest, ['title', 'parent', 'file']);
-    };
+    const getTest = () => this.currentTest;
 
     const resolutionKeySingle = browser.isMobile ? 'orientation' : 'viewport';
     const resolutionKeyPlural = browser.isMobile ? 'orientations' : 'viewports';
