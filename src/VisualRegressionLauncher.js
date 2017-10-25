@@ -93,12 +93,13 @@ export default class VisualRegressionLauncher {
       return _.pick(this.currentTest, ['title', 'parent', 'file']);
     };
 
-    const resolutionKeySingle = browser.isMobile ? 'orientation' : 'viewport';
-    const resolutionKeyPlural = browser.isMobile ? 'orientations' : 'viewports';
-    const resolutionMap = browser.isMobile ? mapOrientations : mapViewports;
+    let isMobile = browser.isMoble || baseContext.desiredCapabilities.isMobile;
+    const resolutionKeySingle = isMobile ? 'orientation' : 'viewport';
+    const resolutionKeyPlural = isMobile ? 'orientations' : 'viewports';
+    const resolutionMap = isMobile ? mapOrientations : mapViewports;
 
     const viewportChangePauseDefault = this.viewportChangePause;
-    const resolutionDefault = browser.isMobile ? this.orientations : this.viewports;
+    const resolutionDefault = isMobile ? this.orientations : this.viewports;
 
     return async function async(...args) {
       const url = await browser.getUrl();
