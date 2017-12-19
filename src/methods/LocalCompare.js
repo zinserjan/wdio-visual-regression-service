@@ -28,8 +28,9 @@ export default class LocalCompare extends BaseCompare {
     if (referenceExists) {
       log('reference exists, compare it with the taken now');
       const captured = new Buffer(base64Screenshot, 'base64');
+      const ignoreComparison = _.get(context, 'options.ignoreComparison', this.ignoreComparison);
 
-      const compareData = await this.compareImages(referencePath, captured);
+      const compareData = await this.compareImages(referencePath, captured, ignoreComparison);
 
       const { isSameDimensions } = compareData;
       const misMatchPercentage = Number(compareData.misMatchPercentage);
@@ -64,7 +65,6 @@ export default class LocalCompare extends BaseCompare {
    * @return {{misMatchPercentage: Number, isSameDimensions:Boolean, getImageDataUrl: function}}
    */
   async compareImages(reference, screenshot, ignore = '') {
-    const ignoreComparison = ignore || this.ignoreComparison;
     return await new Promise((resolve) => {
       const image = resemble(reference).compareTo(screenshot);
 
