@@ -14,6 +14,7 @@ export default class LocalCompare extends BaseCompare {
     this.getReferencefile = options.referenceName;
     this.getDiffFile = options.diffName;
     this.misMatchTolerance = _.get(options, 'misMatchTolerance', 0.01);
+    this.ignoreComparison = _.get(options, 'ignoreComparison', '');
   }
 
   async afterScreenshot(context, base64Screenshot) {
@@ -63,10 +64,11 @@ export default class LocalCompare extends BaseCompare {
    * @return {{misMatchPercentage: Number, isSameDimensions:Boolean, getImageDataUrl: function}}
    */
   async compareImages(reference, screenshot, ignore = '') {
+    const ignoreComparison = ignore || this.ignoreComparison;
     return await new Promise((resolve) => {
       const image = resemble(reference).compareTo(screenshot);
 
-      switch(ignore) {
+      switch(ignoreComparison) {
         case 'colors':
           image.ignoreColors();
           break;
