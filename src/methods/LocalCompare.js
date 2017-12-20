@@ -68,7 +68,7 @@ export default class LocalCompare extends BaseCompare {
     return await new Promise((resolve) => {
       const image = resemble(reference).compareTo(screenshot);
 
-      switch(ignoreComparison) {
+      switch(ignore) {
         case 'colors':
           image.ignoreColors();
           break;
