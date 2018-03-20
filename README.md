@@ -150,12 +150,12 @@ exports.config = {
   ],
   visualRegression: {
     compare: new VisualRegressionCompare.Spectre({
-          project: settings.spectreProjectName,
-          suite: settings.spectreSuiteName,
-          url: settings.spectreURL,
-          spectreOptions: getUploadOptions,
-          misMatchTolerance: util.misMatchTolerance
-        }),
+       project: settings.spectreProjectName,
+       suite: settings.spectreSuiteName,
+       url: settings.spectreURL,
+       spectreOptions: getUploadOptions,
+       misMatchTolerance: util.misMatchTolerance
+    }),
     viewportChangePause: 300,
     viewports: [{ width: 320, height: 480 }, { width: 480, height: 320 }, { width: 1024, height: 768 }],
     orientations: ['landscape', 'portrait'],
