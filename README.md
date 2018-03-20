@@ -105,6 +105,65 @@ You can pass the following options to it's constructor as object:
 * **screenshotName** `Function` <br>
 pass in a function that returns the filename for the current screenshot. Function receives a *context* object as first parameter with all relevant information about the command.
 
+#### VisualRegressionCompare.Spectre
+This method is used for uploading screenshots to the web application [Spectre](https://github.com/wearefriday/spectre). 
+Spectre is a UI for visual regression testing. It stores the screenshots and compares them which is quite useful for Continuous Integration.
+
+You can pass the following options to it's constructor as object:
+
+* **url** `String` <br>
+pass in a spectre webservice url. 
+
+* **project** `String` <br>
+pass in a name for your project. 
+
+* **suite** `String` <br>
+pass in a name for your testsuite. One project can contain several suites. 
+
+* **spectreOptions** `Function` <br>
+pass in a function that returns an Object with following properties: `testname, browser, size`. Function receives a *context* object as first parameter with all relevant information about the command.
+
+* **misMatchTolerance** `Number`  ( default: 0.01 ) <br>
+number between 0 and 100 that defines the degree of mismatch to consider two images as identical, increasing this value will decrease test coverage.
+<br> The misMatchTolerance for spectre can be defined in its settings, this misMatchTolerance only affects local tests.
+
+**Example**
+```js
+// wdio.conf.js
+
+var path = require('path');
+var VisualRegressionCompare = require('wdio-visual-regression-service/compare');
+
+function getUploadOptions(context) {
+  return {
+    testName:  context.test.title,
+    browser: context.browser.name,
+    size: context.meta.viewport.width
+  }
+};
+
+
+exports.config = {
+  // ...
+  services: [
+    'visual-regression',
+  ],
+  visualRegression: {
+    compare: new VisualRegressionCompare.Spectre({
+          project: settings.spectreProjectName,
+          suite: settings.spectreSuiteName,
+          url: settings.spectreURL,
+          spectreOptions: getUploadOptions,
+          misMatchTolerance: util.misMatchTolerance
+        }),
+    viewportChangePause: 300,
+    viewports: [{ width: 320, height: 480 }, { width: 480, height: 320 }, { width: 1024, height: 768 }],
+    orientations: ['landscape', 'portrait'],
+  },
+  // ...
+};
+```
+
 ## Usage
 wdio-visual-regression-service enhances an WebdriverIO instance with the following commands:
 * `browser.checkViewport([{options}]);`
