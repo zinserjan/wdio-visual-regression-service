@@ -39,7 +39,7 @@ export default class Spectre extends BaseCompare {
   async afterScreenshot(context, base64Screenshot) {
     const spectreUploadOptions = this.getSpectreUploadOptions(context);
     const misMatchTolerance = this.misMatchTolerance;
-    const testrunID = (await fs.readJson(pathToRunIDJson, 'utf8').id);
+    const testrunID = (await fs.readJson(pathToRunIDJson, 'utf8')).id;
 
     const uploadName = `spectreTestname : ${spectreUploadOptions.testName}, browser: ${spectreUploadOptions.browser}, size: ${spectreUploadOptions.size}, run_id:  #${testrunID}`;
     log(`${uploadName} - starting upload`);
