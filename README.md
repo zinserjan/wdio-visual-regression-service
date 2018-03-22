@@ -139,8 +139,8 @@ function getUploadOptions(context) {
     testName:  context.test.title,
     browser: context.browser.name,
     size: context.meta.viewport.width
-  }
-};
+  };
+}
 
 
 exports.config = {
@@ -150,11 +150,11 @@ exports.config = {
   ],
   visualRegression: {
     compare: new VisualRegressionCompare.Spectre({
-       project: settings.spectreProjectName,
-       suite: settings.spectreSuiteName,
-       url: settings.spectreURL,
+       project: 'my project',
+       suite: 'my test suite',
+       url: 'http://localhost:3000',
        spectreOptions: getUploadOptions,
-       misMatchTolerance: util.misMatchTolerance
+       misMatchTolerance: 30
     }),
     viewportChangePause: 300,
     viewports: [{ width: 320, height: 480 }, { width: 480, height: 320 }, { width: 1024, height: 768 }],
