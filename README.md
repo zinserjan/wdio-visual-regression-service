@@ -123,7 +123,7 @@ pass in a name for your testsuite. One project can contain several suites.
 * **spectreOptions** `Function` <br>
 pass in a function that returns an Object with following properties: `testname, browser, size`. Function receives a *context* object as first parameter with all relevant information about the command.
 
-* **misMatchTolerance** `Number`  ( default: 0.01 ) <br>
+* **misMatchTolerance** `Number`  ( default: 30 ) <br>
 number between 0 and 100 that defines the degree of mismatch to consider two images as identical, increasing this value will decrease test coverage.
 <br> The misMatchTolerance for spectre can be defined in its settings, this misMatchTolerance only affects local tests.
 

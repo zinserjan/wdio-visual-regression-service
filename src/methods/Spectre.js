@@ -15,7 +15,7 @@ export default class Spectre extends BaseCompare {
   constructor(options = {}) {
     super();
     this.getSpectreUploadOptions = options.spectreOptions;
-    this.misMatchTolerance = _.get(options, 'misMatchTolerance', 0.01);
+    this.misMatchTolerance = `${_.get(options, 'misMatchTolerance', 30)}%`;
     this.spectreURL = options.url;
     this.project = options.project;
     this.suite = options.suite;
@@ -44,15 +44,15 @@ export default class Spectre extends BaseCompare {
     const uploadName = `spectreTestname : ${spectreUploadOptions.testName}, browser: ${spectreUploadOptions.browser}, size: ${spectreUploadOptions.size}, run_id:  #${testrunID}`;
     log(`${uploadName} - starting upload`);
 
-    const result = await this.spectreClient.submitScreenshot(spectreUploadOptions.testName, spectreUploadOptions.browser, spectreUploadOptions.size, base64Screenshot, testrunID);
+    const result = await this.spectreClient.submitScreenshot(spectreUploadOptions.testName, spectreUploadOptions.browser, spectreUploadOptions.size, base64Screenshot, testrunID, '', '', misMatchTolerance);
     log(`${uploadName} - upload successful`);
 
-      if ((result.diff / 100) > misMatchTolerance) {
-        log(`${uploadName} - Image is different! ${result.diff / 100}%`);
-        return this.createResultReport(result.diff / 100, false, true);
-      } else {
-        log(`${uploadName} - Image is within tolerance or the same`);
-        return this.createResultReport(result.diff / 100, true, true);
-      }
+    if (result.pass) {
+      log(`${uploadName} - Image is within tolerance or the same`);
+      return this.createResultReport(result.diff, result.pass, true);
+    } else {
+      log(`${uploadName} - Image is different! ${result.diff}%`);
+      return this.createResultReport(result.diff, result.pass, true);
+    }
   }
 }
