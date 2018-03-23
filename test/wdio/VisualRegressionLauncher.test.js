@@ -132,6 +132,10 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
 
   });
 
+  it.skip('calls onPrepare hook', async function () {
+    // untestable cause this will be executed before tests on launcher process :D
+  });
+
   it('calls before hook', async function () {
     assert.isTrue(this.beforeStub.calledOnce, 'before hook should be called once');
     const beforeArgs = this.beforeStub.args[0];
@@ -194,6 +198,9 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     assert.isString(base64Screenshot, 'Screenshot should be a base64 string');
   });
 
+  it.skip('calls onComplete hook', function () {
+    // untestable cause this will be executed after tests on launcher process :D
+  });
 
   it('returns result from afterScreenshot hook', async function () {
     const expectedResult = {

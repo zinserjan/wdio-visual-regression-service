@@ -75,7 +75,7 @@ describe.only('Spectre', function () {
         url: `/projects/${this.project}/suites/${this.suite}/runs/1`
       });
 
-    await instance.before();
+    await instance.onPrepare();
 
     assert.isNotNull(requestBody, "Request should be finished!");
     assert.include(requestBody, 'name="project"');
@@ -117,7 +117,7 @@ describe.only('Spectre', function () {
     assert.deepEqual(resultIdentitical, {
       misMatchPercentage: 0,
       isWithinMisMatchTolerance: true,
-      isSameDimensions: null,
+      isSameDimensions: true,
       isExactSameImage: true
     }, 'Result should be reported');
 
@@ -153,7 +153,7 @@ describe.only('Spectre', function () {
     assert.deepEqual(resultDifferent, {
       misMatchPercentage: 4.56,
       isWithinMisMatchTolerance: false,
-      isSameDimensions: null,
+      isSameDimensions: true,
       isExactSameImage: false,
     }, 'Result should be reported');
   });

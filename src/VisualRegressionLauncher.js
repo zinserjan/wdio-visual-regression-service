@@ -8,8 +8,15 @@ import { mapViewports, mapOrientations } from './modules/mapViewports';
 
 export default class VisualRegressionLauncher {
 
+  /**
+   * Gets executed once before all workers get launched.
+   * @param {Object} config wdio configuration object
+   * @param {Array.<Object>} capabilities list of capabilities details
+   */
   async onPrepare(config) {
     this.validateConfig(config);
+    this.compare = config.visualRegression.compare;
+    await this.runHook('onPrepare');
   }
 
   /**
@@ -65,7 +72,17 @@ export default class VisualRegressionLauncher {
    * @return {Promise}
    */
   async after(capabilities, specs) {
-    await this.runHook('after');
+    await this.runHook('after', capabilities, specs);
+  }
+
+  /**
+   * Gets executed after all workers got shut down and the process is about to exit.
+   * @param {Object} exitCode 0 - success, 1 - fail
+   * @param {Object} config wdio configuration object
+   * @param {Array.<Object>} capabilities list of capabilities details
+   */
+  async onComplete(exitCode, config, capabilities) {
+    await this.runHook('onComplete');
   }
 
   async runHook(hookName, ...args) {

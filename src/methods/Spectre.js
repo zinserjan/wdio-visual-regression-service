@@ -22,7 +22,7 @@ export default class Spectre extends BaseCompare {
     this.spectreClient = new SpectreClient(this.spectreURL);
   }
 
-  async before(context){
+  async onPrepare() {
     const creationOptions = `spectreURL: ${this.spectreURL}, project: ${this.project}, suite: ${this.suite}`;
     log(`${creationOptions} - creating testrun`);
     const result = await this.spectreClient.createTestrun(this.project, this.suite);
