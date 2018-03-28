@@ -18,7 +18,7 @@ async function readAsBase64(file) {
   return new Buffer(content).toString('base64');
 }
 
-describe.only('Spectre', function () {
+describe('Spectre', function () {
   beforeEach(function () {
     nock.disableNetConnect();
 
