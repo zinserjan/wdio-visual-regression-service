@@ -46,7 +46,7 @@ export default class Spectre extends BaseCompare {
     const fuzzLevel = `${_.get(context, 'options.fuzzLevel', this.fuzzLevel)}%`;
     const url = _.get(context, 'meta.url', undefined);
 
-    const uploadName = `Run-Id:  #${testrunID}, Test: ${test}, Url: ${url}, Browser: ${browser}, Size: ${size}, Fuzz-Level: ${fuzzLevel}`;
+    const uploadName = `Run-Id: #${testrunID}, Test: ${test}, Url: ${url}, Browser: ${browser}, Size: ${size}, Fuzz-Level: ${fuzzLevel}`;
     log(`${uploadName} - Starting upload`);
 
     const result = await this.spectreClient.submitScreenshot(test, browser, size, base64Screenshot, testrunID, '', url, fuzzLevel);
