@@ -44,7 +44,7 @@ export default class Spectre extends BaseCompare {
     const uploadName = `spectreTestname : ${spectreUploadOptions.testName}, browser: ${spectreUploadOptions.browser}, size: ${spectreUploadOptions.size}, run_id:  #${testrunID}`;
     log(`${uploadName} - starting upload`);
 
-    const result = await this.spectreClient.submitScreenshot(spectreUploadOptions.testName, spectreUploadOptions.browser, spectreUploadOptions.size, base64Screenshot, testrunID, '', '', misMatchTolerance);
+    const result = await this.spectreClient.submitScreenshot(spectreUploadOptions.testName, spectreUploadOptions.browser, spectreUploadOptions.size, base64Screenshot, testrunID, '', context.meta.url, misMatchTolerance);
     log(`${uploadName} - upload successful`);
 
     if (result.pass) {
