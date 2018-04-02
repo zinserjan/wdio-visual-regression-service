@@ -15,7 +15,7 @@ export default class Spectre extends BaseCompare {
   constructor(options = {}) {
     super();
     this.getSpectreUploadOptions = options.spectreOptions;
-    this.misMatchTolerance = `${_.get(options, 'misMatchTolerance', 30)}%`;
+    this.fuzzLevel = `${_.get(options, 'fuzzLevel', 30)}%`;
     this.spectreURL = options.url;
     this.project = options.project;
     this.suite = options.suite;
@@ -38,13 +38,12 @@ export default class Spectre extends BaseCompare {
 
   async afterScreenshot(context, base64Screenshot) {
     const spectreUploadOptions = this.getSpectreUploadOptions(context);
-    const misMatchTolerance = this.misMatchTolerance;
     const testrunID = (await fs.readJson(pathToRunIDJson, 'utf8')).id;
 
     const uploadName = `Test: ${spectreUploadOptions.testName}, Browser: ${spectreUploadOptions.browser}, Size: ${spectreUploadOptions.size}, Run-Id:  #${testrunID}`;
     log(`${uploadName} - starting upload`);
 
-    const result = await this.spectreClient.submitScreenshot(spectreUploadOptions.testName, spectreUploadOptions.browser, spectreUploadOptions.size, base64Screenshot, testrunID, '', context.meta.url, misMatchTolerance);
+    const result = await this.spectreClient.submitScreenshot(spectreUploadOptions.testName, spectreUploadOptions.browser, spectreUploadOptions.size, base64Screenshot, testrunID, '', context.meta.url, this.fuzzLevel);
     log(`${uploadName} - upload successful`);
 
     if (result.pass) {

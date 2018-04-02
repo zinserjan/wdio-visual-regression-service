@@ -106,26 +106,25 @@ You can pass the following options to it's constructor as object:
 pass in a function that returns the filename for the current screenshot. Function receives a *context* object as first parameter with all relevant information about the command.
 
 #### VisualRegressionCompare.Spectre
-This method is used for uploading screenshots to the web application [Spectre](https://github.com/wearefriday/spectre). 
+This method is used for uploading screenshots to the web application [Spectre](https://github.com/wearefriday/spectre).
 Spectre is a UI for visual regression testing. It stores the screenshots and compares them which is quite useful for Continuous Integration.
 
 You can pass the following options to it's constructor as object:
 
 * **url** `String` <br>
-pass in a spectre webservice url. 
+pass in a spectre webservice url.
 
 * **project** `String` <br>
-pass in a name for your project. 
+pass in a name for your project.
 
 * **suite** `String` <br>
-pass in a name for your testsuite. One project can contain several suites. 
+pass in a name for your testsuite. One project can contain several suites.
 
 * **spectreOptions** `Function` <br>
 pass in a function that returns an Object with following properties: `testname, browser, size`. Function receives a *context* object as first parameter with all relevant information about the command.
 
-* **misMatchTolerance** `Number`  ( default: 30 ) <br>
-number between 0 and 100 that defines the degree of mismatch to consider two images as identical, increasing this value will decrease test coverage.
-<br> The misMatchTolerance for spectre can be defined in its settings, this misMatchTolerance only affects local tests.
+* **fuzzLevel** `Number`  ( default: 30 ) <br>
+number between 0 and 100 that defines the fuzz factor of Spectre's image comparison method. For more details please have a look at [Spectre documentation](https://github.com/wearefriday/spectre).
 
 **Example**
 ```js
