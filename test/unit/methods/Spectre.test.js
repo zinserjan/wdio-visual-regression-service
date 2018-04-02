@@ -25,12 +25,12 @@ describe('Spectre', function () {
     this.url = 'http://localhost:3000';
     this.project = 'test-project';
     this.suite = 'test-suite';
-    this.spectreOptions = {
-      testName: 'MyTest',
-      browser: 'Chrome',
-      size: '100px'
-    };
-    this.spectreOptionsHelper = stub().returns(this.spectreOptions);
+    this.test = 'MyTest';
+    this.browser = 'Chrome';
+    this.size = '100px';
+    this.getTest = stub().returns(this.test);
+    this.getBrowser = stub().returns(this.browser);
+    this.getSize = stub().returns(this.size);
   });
 
   afterEach(function () {
@@ -40,10 +40,12 @@ describe('Spectre', function () {
 
   it('creates a instance of BaseCompare', async function () {
     const instance = new Spectre({
-      spectreOptions: this.spectreOptionsHelper,
       url: this.url,
       project: this.project,
-      suite: this.suite
+      suite: this.suite,
+      test: this.getTest,
+      browser: this.getBrowser,
+      size: this.getSize,
     });
     assert.instanceOf(instance, BaseCompare, 'Spectre should extend BaseCompare');
   });
@@ -54,10 +56,12 @@ describe('Spectre', function () {
     let requestBody = null;
 
     const instance = createTestMethodInstance(Spectre, {
-      spectreOptions: this.spectreOptionsHelper,
       url: this.url,
       project: this.project,
-      suite: this.suite
+      suite: this.suite,
+      test: this.getTest,
+      browser: this.getBrowser,
+      size: this.getSize,
     });
 
     nock(this.url)
@@ -88,9 +92,9 @@ describe('Spectre', function () {
       .once()
       .reply(200, {
         id: 1128,
-        name: this.spectreOptions.testName,
-        browser: this.spectreOptions.browser,
-        size: this.spectreOptions.size,
+        name: this.test,
+        browser: this.browser,
+        size: this.size,
         run_id: 111,
         diff: 0,
         created_at: '2018-03-22T15:34:15.036Z',
@@ -111,8 +115,12 @@ describe('Spectre', function () {
 
     const resultIdentitical = await instance.afterScreenshot(context, base64Screenshot1);
 
-    assert.strictEqual(this.spectreOptionsHelper.callCount, 1, 'spectreOptions getter should be called once');
-    assert.isTrue(this.spectreOptionsHelper.calledWithExactly(context), 'spectreOptions getter should receive context as arg');
+    assert.strictEqual(this.getTest.callCount, 1, 'test getter should be called once');
+    assert.isTrue(this.getTest.calledWithExactly(context), 'test getter should receive context as arg');
+    assert.strictEqual(this.getBrowser.callCount, 1, 'browser getter should be called once');
+    assert.isTrue(this.getBrowser.calledWithExactly(context), 'browser getter should receive context as arg');
+    assert.strictEqual(this.getSize.callCount, 1, 'size getter should be called once');
+    assert.isTrue(this.getSize.calledWithExactly(context), 'size getter should receive context as arg');
 
     assert.deepEqual(resultIdentitical, {
       misMatchPercentage: 0,
@@ -126,9 +134,9 @@ describe('Spectre', function () {
       .once()
       .reply(200, {
         id: 1131,
-        name: this.spectreOptions.testName,
-        browser: this.spectreOptions.browser,
-        size: this.spectreOptions.size,
+        name: this.test,
+        browser: this.browser,
+        size: this.size,
         run_id: 112,
         diff: 4.56,
         created_at: "2018-03-22T15:43:12.792Z",
@@ -147,8 +155,12 @@ describe('Spectre', function () {
 
     const resultDifferent = await instance.afterScreenshot(context, base64Screenshot2);
 
-    assert.strictEqual(this.spectreOptionsHelper.callCount, 2, 'spectreOptions getter should be called once');
-    assert.isTrue(this.spectreOptionsHelper.calledWithExactly(context), 'spectreOptions getter should receive context as arg');
+    assert.strictEqual(this.getTest.callCount, 2, 'test getter should be called again');
+    assert.isTrue(this.getTest.calledWithExactly(context), 'test getter should receive context as arg');
+    assert.strictEqual(this.getBrowser.callCount, 2, 'browser getter should be called again');
+    assert.isTrue(this.getBrowser.calledWithExactly(context), 'browser getter should receive context as arg');
+    assert.strictEqual(this.getSize.callCount, 2, 'size getter should be called again');
+    assert.isTrue(this.getSize.calledWithExactly(context), 'size getter should receive context as arg');
 
     assert.deepEqual(resultDifferent, {
       misMatchPercentage: 4.56,

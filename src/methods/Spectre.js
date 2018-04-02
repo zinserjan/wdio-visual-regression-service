@@ -14,11 +14,13 @@ export default class Spectre extends BaseCompare {
 
   constructor(options = {}) {
     super();
-    this.getSpectreUploadOptions = options.spectreOptions;
     this.fuzzLevel = _.get(options, 'fuzzLevel', 30);
     this.spectreURL = options.url;
     this.project = options.project;
     this.suite = options.suite;
+    this.test = options.test;
+    this.browser = options.browser;
+    this.size = options.size;
     this.spectreClient = new SpectreClient(this.spectreURL);
   }
 
@@ -37,15 +39,17 @@ export default class Spectre extends BaseCompare {
   }
 
   async afterScreenshot(context, base64Screenshot) {
-    const spectreUploadOptions = this.getSpectreUploadOptions(context);
     const testrunID = (await fs.readJson(pathToRunIDJson, 'utf8')).id;
+    const test = this.test(context);
+    const browser = this.browser(context);
+    const size = this.size(context);
     const fuzzLevel = `${_.get(context, 'options.fuzzLevel', this.fuzzLevel)}%`;
-    const url = _.get(context, 'meta.url', null);
+    const url = _.get(context, 'meta.url', undefined);
 
-    const uploadName = `Run-Id:  #${testrunID}, Test: ${spectreUploadOptions.testName}, Url: ${url}, Browser: ${spectreUploadOptions.browser}, Size: ${spectreUploadOptions.size}, Fuzz-Level: ${fuzzLevel}`;
+    const uploadName = `Run-Id:  #${testrunID}, Test: ${test}, Url: ${url}, Browser: ${browser}, Size: ${size}, Fuzz-Level: ${fuzzLevel}`;
     log(`${uploadName} - Starting upload`);
 
-    const result = await this.spectreClient.submitScreenshot(spectreUploadOptions.testName, spectreUploadOptions.browser, spectreUploadOptions.size, base64Screenshot, testrunID, '', url, fuzzLevel);
+    const result = await this.spectreClient.submitScreenshot(test, browser, size, base64Screenshot, testrunID, '', url, fuzzLevel);
     log(`${uploadName} - Upload successful`);
 
     if (result.pass) {
