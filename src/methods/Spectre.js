@@ -23,13 +23,13 @@ export default class Spectre extends BaseCompare {
   }
 
   async onPrepare() {
-    const creationOptions = `spectreURL: ${this.spectreURL}, project: ${this.project}, suite: ${this.suite}`;
+    const creationOptions = `Api-Url: ${this.spectreURL}, Project: ${this.project}, Suite: ${this.suite}`;
     log(`${creationOptions} - creating testrun`);
     const result = await this.spectreClient.createTestrun(this.project, this.suite);
-    log(`${creationOptions} - testrun created - run_id: #${result.id}`);
+    log(`${creationOptions} - testrun created - Run-Id: #${result.id}`);
     try{
       await fs.writeJson(pathToRunIDJson, result);
-      log(`Saved run_id #${result.id} to ${pathToRunIDJson}`);
+      log(`Saved Run-Id #${result.id} to ${pathToRunIDJson}`);
     }
     catch (e){
       throw new Error(`Unable to write file to ${pathToRunIDJson}`);
@@ -41,7 +41,7 @@ export default class Spectre extends BaseCompare {
     const misMatchTolerance = this.misMatchTolerance;
     const testrunID = (await fs.readJson(pathToRunIDJson, 'utf8')).id;
 
-    const uploadName = `spectreTestname : ${spectreUploadOptions.testName}, browser: ${spectreUploadOptions.browser}, size: ${spectreUploadOptions.size}, run_id:  #${testrunID}`;
+    const uploadName = `Test: ${spectreUploadOptions.testName}, Browser: ${spectreUploadOptions.browser}, Size: ${spectreUploadOptions.size}, Run-Id:  #${testrunID}`;
     log(`${uploadName} - starting upload`);
 
     const result = await this.spectreClient.submitScreenshot(spectreUploadOptions.testName, spectreUploadOptions.browser, spectreUploadOptions.size, base64Screenshot, testrunID, '', context.meta.url, misMatchTolerance);
