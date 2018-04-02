@@ -153,7 +153,7 @@ exports.config = {
        suite: 'my test suite',
        url: 'http://localhost:3000',
        spectreOptions: getUploadOptions,
-       misMatchTolerance: 30
+       fuzzLevel: 30
     }),
     viewportChangePause: 300,
     viewports: [{ width: 320, height: 480 }, { width: 480, height: 320 }, { width: 1024, height: 768 }],
@@ -191,7 +191,10 @@ available:
     Overrides the global *orientations* value for this command. All screenshots will be taken in different screen orientations (e.g. for responsive design tests)
 
 * **misMatchTolerance** `Number` <br>
-    Overrides the global *misMatchTolerance* value for this command. Pass in a number between 0 and 100 that defines the degree of mismatch to consider two images as identical,
+    Overrides the global *misMatchTolerance* value for this command. Pass in a number between 0 and 100 that defines the degree of mismatch to consider two images as identical.
+
+* **fuzzLevel** `Number` <br>
+    Overrides the global *fuzzLevel* value for this command. Pass in a number between 0 and 100 that defines the fuzz factor of Spectre's image comparison method.
 
 * **viewportChangePause**  `Number` <br>
     Overrides the global *viewportChangePause* value for this command. Wait x milliseconds after viewport change.
