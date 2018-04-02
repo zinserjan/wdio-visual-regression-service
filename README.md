@@ -149,13 +149,13 @@ exports.config = {
       url: 'http://localhost:3000',
       project: 'my project',
       suite: 'my test suite',
-      test: function getTest() {
+      test: function getTest(context) {
         return context.test.title;
       },
-      browser: function getBrowser() {
+      browser: function getBrowser(context) {
         return context.browser.name;
       },
-      size: function getSize() {
+      size: function getSize(context) {
         return context.meta.viewport != null ? context.meta.viewport.width : context.meta.orientation;
       },
       fuzzLevel: 30
