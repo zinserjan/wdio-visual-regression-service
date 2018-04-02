@@ -21,6 +21,6 @@ export function createTestMethodInstance(Clazz, ...options) {
     beforeScreenshot: (...args) => worker.beforeScreenshot(...args),
     afterScreenshot: (...args) => worker.afterScreenshot(...args),
     after: (...args) => worker.after(...args),
-    onComplete: () => launcher.before()
+    onComplete: () => launcher.onComplete()
   }
 }

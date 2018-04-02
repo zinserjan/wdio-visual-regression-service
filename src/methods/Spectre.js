@@ -60,4 +60,12 @@ export default class Spectre extends BaseCompare {
       return this.createResultReport(result.diff, result.pass, true);
     }
   }
+
+  async onComplete() {
+    try {
+      await fs.remove(pathToRunIDJson);
+    } catch (e) {
+      throw new Error(`Unable to delete file ${pathToRunIDJson}`);
+    }
+  }
 }

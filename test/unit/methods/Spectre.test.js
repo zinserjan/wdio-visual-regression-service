@@ -168,5 +168,7 @@ describe('Spectre', function () {
       isSameDimensions: true,
       isExactSameImage: false,
     }, 'Result should be reported');
+
+    await instance.onComplete();
   });
 });
