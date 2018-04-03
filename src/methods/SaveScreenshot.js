@@ -11,7 +11,7 @@ export default class SaveScreenshot extends BaseCompare {
     this.getScreenshotFile = options.screenshotName;
   }
 
-  async afterScreenshot(context, base64Screenshot) {
+  async processScreenshot(context, base64Screenshot) {
     const screenshotPath = this.getScreenshotFile(context);
 
     log(`create screenshot file at ${screenshotPath}`);

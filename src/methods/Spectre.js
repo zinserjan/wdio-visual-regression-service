@@ -38,7 +38,7 @@ export default class Spectre extends BaseCompare {
     }
   }
 
-  async afterScreenshot(context, base64Screenshot) {
+  async processScreenshot(context, base64Screenshot) {
     const testrunID = (await fs.readJson(pathToRunIDJson, 'utf8')).id;
     const test = this.test(context);
     const browser = this.browser(context);

@@ -38,7 +38,7 @@ describe('SaveScreenshot', function () {
     assert.instanceOf(saveScreenshot, BaseCompare, 'SaveScreenshot should extend BaseCompare');
   });
 
-  context('afterScreenshot', function () {
+  context('processScreenshot', function () {
     beforeEach(async function() {
       this.referencFile = path.join(dirTmp, 'reference.png');
       this.getReferenceFile = stub().returns(this.referencFile);
@@ -59,7 +59,7 @@ describe('SaveScreenshot', function () {
       const context = {};
       const base64Screenshot = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
 
-      const results = await this.saveScreenshot.afterScreenshot(context, base64Screenshot);
+      const results = await this.saveScreenshot.processScreenshot(context, base64Screenshot);
 
       // check reference getter
       assert.strictEqual(this.getReferenceFile.callCount, 1, 'Reference getter should be called once');
@@ -79,7 +79,7 @@ describe('SaveScreenshot', function () {
       const base64Screenshot = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
 
       // 1st run -> create reference
-      const resultFirst = await this.saveScreenshot.afterScreenshot(context, base64Screenshot);
+      const resultFirst = await this.saveScreenshot.processScreenshot(context, base64Screenshot);
 
       // check reference getter
       assert.strictEqual(this.getReferenceFile.callCount, 1, 'Reference getter should be called once');
@@ -100,7 +100,7 @@ describe('SaveScreenshot', function () {
       await pause(1000);
 
       // 2nd run --> update reference image
-      const resultSecond = await this.saveScreenshot.afterScreenshot(context, base64Screenshot);
+      const resultSecond = await this.saveScreenshot.processScreenshot(context, base64Screenshot);
 
       // check reference getter
       assert.strictEqual(this.getReferenceFile.callCount, 2, 'Reference getter should be called once');
@@ -120,7 +120,7 @@ describe('SaveScreenshot', function () {
       const base64ScreenshotNew = await readAsBase64(path.join(dirFixture, 'image/100x100-rotated.png'));
 
       // 1st run -> create reference
-      const resultFirst = await this.saveScreenshot.afterScreenshot(context, base64ScreenshotReference);
+      const resultFirst = await this.saveScreenshot.processScreenshot(context, base64ScreenshotReference);
 
       // check reference getter
       assert.strictEqual(this.getReferenceFile.callCount, 1, 'Reference getter should be called once');
@@ -141,7 +141,7 @@ describe('SaveScreenshot', function () {
       await pause(1000);
 
       // 2nd run --> update refernece with diff image
-      const resultSecond = await this.saveScreenshot.afterScreenshot(context, base64ScreenshotNew);
+      const resultSecond = await this.saveScreenshot.processScreenshot(context, base64ScreenshotNew);
 
       // check reference getter
       assert.strictEqual(this.getReferenceFile.callCount, 2, 'Reference getter should be called once');

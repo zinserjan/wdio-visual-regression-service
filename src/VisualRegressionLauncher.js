@@ -209,32 +209,42 @@ export default class VisualRegressionLauncher {
       const resolutions = _.get(options, resolutionKeyPlural, resolutionDefault);
       const viewportChangePause = _.get(options, 'viewportChangePause', viewportChangePauseDefault);
 
-      const results = await resolutionMap(browser, viewportChangePause, resolutions, async function(resolution) {
-        const meta = _.pickBy({
-          url,
-          element: elementSelector,
-          exclude,
-          hide,
-          remove,
-          [resolutionKeySingle]: resolution
-        }, _.identity);
+      const results = await resolutionMap(
+        browser,
+        viewportChangePause,
+        resolutions,
+        async function mapResolution(resolution) {
+          const meta = _.pickBy({
+            url,
+            element: elementSelector,
+            exclude,
+            hide,
+            remove,
+            [resolutionKeySingle]: resolution
+          }, _.identity);
 
-        const screenshotContext = {
-          ...baseContext,
-          ...getTestDetails(),
-          meta,
-          options
-        };
+          const screenshotContext = {
+            ...baseContext,
+            ...getTestDetails(),
+            meta,
+            options
+          };
 
-        const screenshotContextCleaned = _.pickBy(screenshotContext, _.identity);
+          const screenshotContextCleaned = _.pickBy(screenshotContext, _.identity);
 
-        await runHook('beforeScreenshot', screenshotContextCleaned);
+          await runHook('beforeScreenshot', screenshotContextCleaned);
 
-        const base64Screenshot = await command(browser, ...args);
+          const base64Screenshot = await command(browser, ...args);
 
-        return await runHook('afterScreenshot', screenshotContextCleaned, base64Screenshot);
-      });
+          await runHook('afterScreenshot', screenshotContextCleaned, base64Screenshot);
 
+          // pass the following params to next iteratee function
+          return [screenshotContextCleaned, base64Screenshot];
+        },
+        async function(screenshotContextCleaned, base64Screenshot) {
+          return await runHook('processScreenshot', screenshotContextCleaned, base64Screenshot);
+        }
+      );
       return results;
 
     }
