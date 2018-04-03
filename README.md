@@ -95,6 +95,9 @@ pass in a function that returns the filename for the diff screenshot. Function r
 * **misMatchTolerance** `Number`  ( default: 0.01 ) <br>
 number between 0 and 100 that defines the degree of mismatch to consider two images as identical, increasing this value will decrease test coverage.
 
+* **ignoreComparison** `String`  ( default: nothing ) <br>
+pass in a string with value of `nothing` , `colors` or `antialiasing` to adjust the comparison method.
+
 For an example of generating screenshot filesnames dependent on the current test name, have a look at the sample code of [Configuration](#configuration).
 
 #### VisualRegressionCompare.SaveScreenshot
@@ -200,6 +203,9 @@ available:
 
 * **fuzzLevel** `Number` <br>
     Overrides the global *fuzzLevel* value for this command. Pass in a number between 0 and 100 that defines the fuzz factor of Spectre's image comparison method.
+
+* **ignoreComparison** `String` <br>
+    Overrides the global *ignoreComparison* value for this command. Pass in a string with value of `nothing` , `colors` or `antialiasing` to adjust the comparison method.
 
 * **viewportChangePause**  `Number` <br>
     Overrides the global *viewportChangePause* value for this command. Wait x milliseconds after viewport change.

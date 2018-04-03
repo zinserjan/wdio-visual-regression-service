@@ -14,7 +14,7 @@ export default class LocalCompare extends BaseCompare {
     this.getReferencefile = options.referenceName;
     this.getDiffFile = options.diffName;
     this.misMatchTolerance = _.get(options, 'misMatchTolerance', 0.01);
-    this.ignoreComparison = _.get(options, 'ignoreComparison', '');
+    this.ignoreComparison = _.get(options, 'ignoreComparison', 'nothing');
   }
 
   async afterScreenshot(context, base64Screenshot) {
