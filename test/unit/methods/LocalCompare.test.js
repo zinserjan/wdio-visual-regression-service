@@ -380,4 +380,125 @@ describe('LocalCompare', function () {
       });
     });
   });
+
+  context('ignoreComparison', function () {
+    before(async function () {
+      this.screenshotRed = await readAsBase64(path.join(dirFixture, 'ignoreComparison/100x100-red.png'));
+      this.screenshotRed2 = await readAsBase64(path.join(dirFixture, 'ignoreComparison/100x100-red2.png'));
+    });
+
+    beforeEach(async function () {
+      this.screenshotFile = path.join(dirTmp, 'screenshot.png');
+      this.referencFile = path.join(dirTmp, 'reference.png');
+      this.diffFile = path.join(dirTmp, 'diff.png');
+
+      this.getScreenshotFile = stub().returns(this.screenshotFile);
+      this.getReferenceFile = stub().returns(this.referencFile);
+      this.getDiffFile = stub().returns(this.diffFile);
+    });
+
+
+    context('uses default ignoreComparison', function () {
+      beforeEach(async function () {
+        this.context = {};
+
+        this.localCompare = new LocalCompare({
+          screenshotName: this.getScreenshotFile,
+          referenceName: this.getReferenceFile,
+          diffName: this.getDiffFile,
+        });
+
+        // 1st run -> create reference
+        const resultFirst = await this.localCompare.afterScreenshot({}, this.screenshotRed);
+
+        // check if reference was created
+        const existsReference = await fs.exists(this.screenshotFile);
+        assert.isTrue(existsReference, 'Captured screenshot should exist');
+      });
+
+      it('reports diff when colors differs', async function () {
+        // compare screenshots
+        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotRed2);
+
+        // check diff results
+        assert.isAbove(result.misMatchPercentage, 0, 'Images should diff');
+        assert.isFalse(result.isExactSameImage, 'Images should diff');
+        assert.isFalse(result.isWithinMisMatchTolerance, 'Diff should not be in tolerance');
+
+        // check if diff image was created
+        const existsDiff = await fs.exists(this.diffFile);
+        assert.isTrue(existsDiff, 'Diff screenshot should exist');
+      });
+    });
+
+    context('uses custom ignoreComparison passed in constructor option', function () {
+      beforeEach(async function () {
+        this.ignoreComparison = 'colors';
+        this.context = {};
+
+        this.localCompare = new LocalCompare({
+          screenshotName: this.getScreenshotFile,
+          referenceName: this.getReferenceFile,
+          diffName: this.getDiffFile,
+          ignoreComparison: this.ignoreComparison,
+        });
+
+        // 1st run -> create reference
+        const resultFirst = await this.localCompare.afterScreenshot({}, this.screenshotRed);
+
+        // check if reference was created
+        const existsReference = await fs.exists(this.screenshotFile);
+        assert.isTrue(existsReference, 'Captured screenshot should exist');
+      });
+
+      it('reports equal with ignoreComparison=colors when colors differs', async function () {
+        // compare screenshots
+        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotRed2);
+        // check diff results
+        assert.isTrue(result.isExactSameImage, 'Images should not diff');
+        assert.isTrue(result.isWithinMisMatchTolerance, 'Diff should be in tolerance');
+
+        // check if diff image was not created
+        const existsDiff = await fs.exists(this.diffFile);
+        assert.isFalse(existsDiff, 'Diff screenshot should not exist');
+      });
+    });
+
+    context('uses custom ignoreComparison passed in command options', function () {
+      beforeEach(async function () {
+        this.ignoreComparison = 'colors';
+        this.context = {
+          options: {
+            ignoreComparison: this.ignoreComparison,
+          }
+        };
+
+        this.localCompare = new LocalCompare({
+          screenshotName: this.getScreenshotFile,
+          referenceName: this.getReferenceFile,
+          diffName: this.getDiffFile,
+        });
+
+        // 1st run -> create reference
+        const resultFirst = await this.localCompare.afterScreenshot({}, this.screenshotRed);
+
+        // check if reference was created
+        const existsReference = await fs.exists(this.screenshotFile);
+        assert.isTrue(existsReference, 'Captured screenshot should exist');
+      });
+
+      it('reports equal with ignoreComparison=colors when colors differs', async function () {
+        // compare screenshots
+        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotRed2);
+
+        // check diff results
+        assert.isTrue(result.isExactSameImage, 'Images should not diff');
+        assert.isTrue(result.isWithinMisMatchTolerance, 'Diff should be in tolerance');
+
+        // check if diff image was not created
+        const existsDiff = await fs.exists(this.diffFile);
+        assert.isFalse(existsDiff, 'Diff screenshot should not exist');
+      });
+    });
+  });
 });
