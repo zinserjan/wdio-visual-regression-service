@@ -1,6 +1,13 @@
 export default class BaseCompare {
 
   /**
+   * Gets executed once before all workers get launched.
+   */
+  async onPrepare() {
+    return Promise.resolve();
+  }
+
+  /**
    * Gets executed before the tests starts.
    */
   async before(context) {
@@ -29,6 +36,14 @@ export default class BaseCompare {
   async after() {
     return Promise.resolve();
   }
+
+  /**
+   * Gets executed after all workers got shut down and the process is about to exit.
+   */
+  async onComplete() {
+    return Promise.resolve();
+  }
+
 
 
   createResultReport(misMatchPercentage, isWithinMisMatchTolerance, isSameDimensions) {

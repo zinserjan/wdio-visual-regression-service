@@ -105,6 +105,69 @@ You can pass the following options to it's constructor as object:
 * **screenshotName** `Function` <br>
 pass in a function that returns the filename for the current screenshot. Function receives a *context* object as first parameter with all relevant information about the command.
 
+#### VisualRegressionCompare.Spectre
+This method is used for uploading screenshots to the web application [Spectre](https://github.com/wearefriday/spectre).
+Spectre is a UI for visual regression testing. It stores the screenshots and compares them which is quite useful for Continuous Integration.
+
+You can pass the following options to it's constructor as object:
+
+* **url** `String` <br>
+pass in a spectre webservice url.
+
+* **project** `String` <br>
+pass in a name for your project.
+
+* **suite** `String` <br>
+pass in a name for your testsuite. One project can contain several suites.
+
+* **test** `Function` <br>
+pass in a function that returns the test name for the screenshot. Function receives a *context* object as first parameter with all relevant information about the command.
+
+* **browser** `Function` <br>
+pass in a function that returns the browser for the screenshot. Function receives a *context* object as first parameter with all relevant information about the command.
+
+* **size** `Function` <br>
+pass in a function that returns the size for the screenshot. Function receives a *context* object as first parameter with all relevant information about the command.
+
+* **fuzzLevel** `Number`  ( default: 30 ) <br>
+number between 0 and 100 that defines the fuzz factor of Spectre's image comparison method. For more details please have a look at [Spectre documentation](https://github.com/wearefriday/spectre).
+
+**Example**
+```js
+// wdio.conf.js
+
+var path = require('path');
+var VisualRegressionCompare = require('wdio-visual-regression-service/compare');
+
+exports.config = {
+  // ...
+  services: [
+    'visual-regression',
+  ],
+  visualRegression: {
+    compare: new VisualRegressionCompare.Spectre({
+      url: 'http://localhost:3000',
+      project: 'my project',
+      suite: 'my test suite',
+      test: function getTest(context) {
+        return context.test.title;
+      },
+      browser: function getBrowser(context) {
+        return context.browser.name;
+      },
+      size: function getSize(context) {
+        return context.meta.viewport != null ? context.meta.viewport.width : context.meta.orientation;
+      },
+      fuzzLevel: 30
+    }),
+    viewportChangePause: 300,
+    viewports: [{ width: 320, height: 480 }, { width: 480, height: 320 }, { width: 1024, height: 768 }],
+    orientations: ['landscape', 'portrait'],
+  },
+  // ...
+};
+```
+
 ## Usage
 wdio-visual-regression-service enhances an WebdriverIO instance with the following commands:
 * `browser.checkViewport([{options}]);`
@@ -133,7 +196,10 @@ available:
     Overrides the global *orientations* value for this command. All screenshots will be taken in different screen orientations (e.g. for responsive design tests)
 
 * **misMatchTolerance** `Number` <br>
-    Overrides the global *misMatchTolerance* value for this command. Pass in a number between 0 and 100 that defines the degree of mismatch to consider two images as identical,
+    Overrides the global *misMatchTolerance* value for this command. Pass in a number between 0 and 100 that defines the degree of mismatch to consider two images as identical.
+
+* **fuzzLevel** `Number` <br>
+    Overrides the global *fuzzLevel* value for this command. Pass in a number between 0 and 100 that defines the fuzz factor of Spectre's image comparison method.
 
 * **viewportChangePause**  `Number` <br>
     Overrides the global *viewportChangePause* value for this command. Wait x milliseconds after viewport change.
