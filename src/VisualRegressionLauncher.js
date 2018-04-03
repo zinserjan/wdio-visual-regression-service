@@ -8,6 +8,14 @@ import { mapViewports, mapOrientations } from './modules/mapViewports';
 
 export default class VisualRegressionLauncher {
 
+  constructor() {
+    this.currentSuite = null;
+    this.currentTest = null;
+    this.currentFeature = null;
+    this.currentScenario = null;
+    this.currentStep = null;
+  }
+
   /**
    * Gets executed once before all workers get launched.
    * @param {Object} config wdio configuration object
@@ -55,14 +63,85 @@ export default class VisualRegressionLauncher {
   }
 
   /**
-   * Function to be executed before a test (in Mocha/Jasmine) or a
-   * step (in Cucumber) starts.
-   * @param  {[type]} test [description]
-   * @return {Promise}
+   * Hook that gets executed before the suite starts
+   * @param {Object} suite suite details
    */
-  async beforeTest(test) {
+  beforeSuite (suite) {
+    this.currentSuite = suite;
+  }
+
+  /**
+   * Hook that gets executed after the suite has ended
+   * @param {Object} suite suite details
+   */
+  afterSuite(suite) {
+    this.currentSuite = null;
+  }
+
+  /**
+   * Function to be executed before a test (in Mocha/Jasmine) or a step (in Cucumber) starts.
+   * @param {Object} test test details
+   */
+  beforeTest(test) {
     this.currentTest = test;
   }
+
+  /**
+   * Function to be executed after a test (in Mocha/Jasmine) or a step (in Cucumber) ends.
+   * @param {Object} test test details
+   */
+  afterTest(test) {
+    this.currentTest = null;
+  }
+
+  /**
+   * Function to be executed before a feature starts in Cucumber.
+   * @param  {Object} feature feature details
+   */
+  beforeFeature(feature) {
+    this.currentFeature = feature;
+  }
+
+  /**
+   * Function to be executed after a feature ends in Cucumber.
+   * @param  {Object} feature feature details
+   */
+  afterFeature(feature) {
+    this.currentFeature = null;
+  }
+
+  /**
+   * Function to be executed before a scenario starts in Cucumber.
+   * @param  {Object} scenario scenario details
+   */
+  beforeScenario(scenario) {
+    this.currentScenario = scenario;
+  }
+
+  /**
+   * Function to be executed after a scenario ends in Cucumber.
+   * @param  {Object} scenario scenario details
+   */
+  afterScenario(scenario) {
+    this.currentScenario = null;
+  }
+
+  /**
+   * Function to be executed before a step starts in Cucumber.
+   * @param  {Object} step step details
+   */
+  beforeStep(step) {
+    this.currentStep = step;
+  }
+
+  /**
+   * Function to be executed after a step ends in Cucumber.
+   * @param  {Object} stepResult stepResult details
+   */
+  afterStep(stepResult) {
+    this.currentStep = null;
+  }
+
 
   /**
    * Gets executed after all tests are done. You still have access to all global
@@ -106,7 +185,7 @@ export default class VisualRegressionLauncher {
 
     const runHook = this.runHook.bind(this);
 
-    const getTest = () => this.currentTest;
+    const getTestDetails = () => this.getTestDetails();
 
     const resolutionKeySingle = browser.isMobile ? 'orientation' : 'viewport';
     const resolutionKeyPlural = browser.isMobile ? 'orientations' : 'viewports';
@@ -142,7 +221,7 @@ export default class VisualRegressionLauncher {
 
         const screenshotContext = {
           ...baseContext,
-          test: getTest(),
+          ...getTestDetails(),
           meta,
           options
         };
@@ -161,4 +240,15 @@ export default class VisualRegressionLauncher {
     }
   }
 
+  getTestDetails() {
+    return _.pickBy({
+     // mocha
+     suite: this.currentSuite,
+     test: this.currentTest,
+     // cucumber
+     feature: this.currentFeature,
+     scenario: this.currentScenario,
+     step: this.currentStep,
+    }, _.identity);
+  }
 }

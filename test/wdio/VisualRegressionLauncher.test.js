@@ -28,6 +28,10 @@ function assertScreenshotContext(options, type, screenshotContext) {
   const { test } = screenshotContext;
   assertTest(test);
 
+  // check suite
+  const { suite } = screenshotContext;
+  assertTest(suite);
+
   // check meta
   const { meta } = screenshotContext;
   assertMeta(meta, type, options);
