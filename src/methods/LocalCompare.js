@@ -14,6 +14,7 @@ export default class LocalCompare extends BaseCompare {
     this.getReferencefile = options.referenceName;
     this.getDiffFile = options.diffName;
     this.misMatchTolerance = _.get(options, 'misMatchTolerance', 0.01);
+    this.ignoreComparison = _.get(options, 'ignoreComparison', '');
   }
 
   async afterScreenshot(context, base64Screenshot) {
@@ -27,8 +28,9 @@ export default class LocalCompare extends BaseCompare {
     if (referenceExists) {
       log('reference exists, compare it with the taken now');
       const captured = new Buffer(base64Screenshot, 'base64');
+      const ignoreComparison = _.get(context, 'options.ignoreComparison', this.ignoreComparison);
 
-      const compareData = await this.compareImages(referencePath, captured);
+      const compareData = await this.compareImages(referencePath, captured, ignoreComparison);
 
       const { isSameDimensions } = compareData;
       const misMatchPercentage = Number(compareData.misMatchPercentage);
