@@ -1,5 +1,3 @@
-import fs from 'fs-extra';
-import path from 'path';
 import BaseCompare from './BaseCompare';
 import debug from 'debug';
 import _ from 'lodash';
@@ -7,8 +5,7 @@ import _ from 'lodash';
 import SpectreClient from "nodeclient-spectre";
 
 const log = debug('wdio-visual-regression-service:Spectre');
-
-const pathToRunIDJson = path.join(__dirname, './run_id.json');
+const runtimeConfigName = 'spectre-run';
 
 export default class Spectre extends BaseCompare {
 
@@ -29,17 +26,12 @@ export default class Spectre extends BaseCompare {
     log(`${creationOptions} - Creating testrun`);
     const result = await this.spectreClient.createTestrun(this.project, this.suite);
     log(`${creationOptions} - Testrun created - Run-Id: #${result.id}`);
-    try{
-      await fs.writeJson(pathToRunIDJson, result);
-      log(`${creationOptions} - Saved Run-Id #${result.id} to ${pathToRunIDJson}`);
-    }
-    catch (e){
-      throw new Error(`Unable to write file to ${pathToRunIDJson}`);
-    }
+    this.saveRuntimeConfig(runtimeConfigName, result);
   }
 
   async processScreenshot(context, base64Screenshot) {
-    const testrunID = (await fs.readJson(pathToRunIDJson, 'utf8')).id;
+    const runDetails = await this.getRuntimeConfig(runtimeConfigName);
+    const testrunID = runDetails.id;
     const test = this.test(context);
     const browser = this.browser(context);
     const size = this.size(context);
@@ -62,10 +54,6 @@ export default class Spectre extends BaseCompare {
   }
 
   async onComplete() {
-    try {
-      await fs.remove(pathToRunIDJson);
-    } catch (e) {
-      throw new Error(`Unable to delete file ${pathToRunIDJson}`);
-    }
+    await this.cleanUpRuntimeConfigs();
   }
 }
