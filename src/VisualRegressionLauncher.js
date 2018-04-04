@@ -213,7 +213,7 @@ export default class VisualRegressionLauncher {
         browser,
         viewportChangePause,
         resolutions,
-        async function mapResolution(resolution) {
+        async function takeScreenshot(resolution) {
           const meta = _.pickBy({
             url,
             element: elementSelector,
@@ -241,7 +241,7 @@ export default class VisualRegressionLauncher {
           // pass the following params to next iteratee function
           return [screenshotContextCleaned, base64Screenshot];
         },
-        async function(screenshotContextCleaned, base64Screenshot) {
+        async function processScreenshot(screenshotContextCleaned, base64Screenshot) {
           return await runHook('processScreenshot', screenshotContextCleaned, base64Screenshot);
         }
       );
