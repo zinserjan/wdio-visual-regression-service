@@ -113,7 +113,7 @@ describe('Spectre', function () {
 
     const context = {};
 
-    const resultIdentitical = await instance.afterScreenshot(context, base64Screenshot1);
+    const resultIdentitical = await instance.processScreenshot(context, base64Screenshot1);
 
     assert.strictEqual(this.getTest.callCount, 1, 'test getter should be called once');
     assert.isTrue(this.getTest.calledWithExactly(context), 'test getter should receive context as arg');
@@ -153,7 +153,7 @@ describe('Spectre', function () {
         url: `/projects/${this.project}/suites/${this.suite}/runs/1#test_1131`
       });
 
-    const resultDifferent = await instance.afterScreenshot(context, base64Screenshot2);
+    const resultDifferent = await instance.processScreenshot(context, base64Screenshot2);
 
     assert.strictEqual(this.getTest.callCount, 2, 'test getter should be called again');
     assert.isTrue(this.getTest.calledWithExactly(context), 'test getter should receive context as arg');

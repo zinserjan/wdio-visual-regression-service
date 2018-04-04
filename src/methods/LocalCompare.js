@@ -17,7 +17,7 @@ export default class LocalCompare extends BaseCompare {
     this.ignoreComparison = _.get(options, 'ignoreComparison', 'nothing');
   }
 
-  async afterScreenshot(context, base64Screenshot) {
+  async processScreenshot(context, base64Screenshot) {
     const screenshotPath = this.getScreenshotFile(context);
     const referencePath = this.getReferencefile(context);
 

@@ -23,9 +23,15 @@ export default class BaseCompare {
 
   /**
    * Gets executed after the screenshot is taken.
-   * You can do here your image comparison magic.
    */
   async afterScreenshot(context, base64Screenshot) {
+    return Promise.resolve();
+  }
+
+  /**
+   * You can do here your image comparison magic.
+   */
+  async processScreenshot(context, base64Screenshot) {
     return Promise.resolve();
   }
 

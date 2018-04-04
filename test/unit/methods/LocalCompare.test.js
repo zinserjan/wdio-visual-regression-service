@@ -35,7 +35,7 @@ describe('LocalCompare', function () {
     assert.instanceOf(localCompare, BaseCompare, 'LocalCompare should extend BaseCompare');
   });
 
-  context('afterScreenshot', function () {
+  context('processScreenshot', function () {
     beforeEach(async function() {
       this.screenshotFile = path.join(dirTmp, 'screenshot.png');
       this.referencFile = path.join(dirTmp, 'reference.png');
@@ -63,7 +63,7 @@ describe('LocalCompare', function () {
       const context = {};
       const base64Screenshot = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
 
-      await this.localCompare.afterScreenshot(context, base64Screenshot);
+      await this.localCompare.processScreenshot(context, base64Screenshot);
 
       // check screenshot getter
       assert.strictEqual(this.getScreenshotFile.callCount, 1, 'Screenshot getter should be called once');
@@ -78,7 +78,7 @@ describe('LocalCompare', function () {
       const context = {};
       const base64Screenshot = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
 
-      const results = await this.localCompare.afterScreenshot(context, base64Screenshot);
+      const results = await this.localCompare.processScreenshot(context, base64Screenshot);
 
       // check reference getter
       assert.strictEqual(this.getReferenceFile.callCount, 1, 'Reference getter should be called once');
@@ -98,7 +98,7 @@ describe('LocalCompare', function () {
       const base64Screenshot = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
 
       // 1st run -> create reference
-      const resultFirst = await this.localCompare.afterScreenshot(context, base64Screenshot);
+      const resultFirst = await this.localCompare.processScreenshot(context, base64Screenshot);
 
       // check reference getter
       assert.strictEqual(this.getReferenceFile.callCount, 1, 'Reference getter should be called once');
@@ -116,7 +116,7 @@ describe('LocalCompare', function () {
       assert.isAbove(statsFirst.mtime.getTime(), 0);
 
       // 2nd run --> go against reference image
-      const resultSecond = await this.localCompare.afterScreenshot(context, base64Screenshot);
+      const resultSecond = await this.localCompare.processScreenshot(context, base64Screenshot);
 
       // check reference getter
       assert.strictEqual(this.getReferenceFile.callCount, 2, 'Reference getter should be called once');
@@ -136,7 +136,7 @@ describe('LocalCompare', function () {
       const base64ScreenshotNew = await readAsBase64(path.join(dirFixture, 'image/100x100-rotated.png'));
 
       // 1st run -> create reference
-      const resultFirst = await this.localCompare.afterScreenshot(context, base64ScreenshotReference);
+      const resultFirst = await this.localCompare.processScreenshot(context, base64ScreenshotReference);
 
       // check reference getter
       assert.strictEqual(this.getReferenceFile.callCount, 1, 'Reference getter should be called once');
@@ -154,7 +154,7 @@ describe('LocalCompare', function () {
       assert.isAbove(statsFirst.mtime.getTime(), 0);
 
       // 2nd run --> create diff image
-      const resultSecond = await this.localCompare.afterScreenshot(context, base64ScreenshotNew);
+      const resultSecond = await this.localCompare.processScreenshot(context, base64ScreenshotNew);
 
       // check diff getter
       assert.strictEqual(this.getDiffFile.callCount, 1, 'Diff getter should be called once');
@@ -183,10 +183,10 @@ describe('LocalCompare', function () {
       const base64ScreenshotNew = await readAsBase64(path.join(dirFixture, 'image/100x100-rotated.png'));
 
       // 1st run -> create reference
-      await this.localCompare.afterScreenshot({}, base64ScreenshotReference);
+      await this.localCompare.processScreenshot({}, base64ScreenshotReference);
 
       // 2nd run --> create diff image
-      await this.localCompare.afterScreenshot({}, base64ScreenshotNew);
+      await this.localCompare.processScreenshot({}, base64ScreenshotNew);
 
       // check if diff image was created
       let existsDiff = await fs.exists(this.diffFile);
@@ -198,7 +198,7 @@ describe('LocalCompare', function () {
             misMatchTolerance: 100,
         }
       };
-      await this.localCompare.afterScreenshot(context, base64ScreenshotNew);
+      await this.localCompare.processScreenshot(context, base64ScreenshotNew);
 
       // check if diff image was deleted
       existsDiff = await fs.exists(this.diffFile);
@@ -243,7 +243,7 @@ describe('LocalCompare', function () {
         });
 
         // 1st run -> create reference
-        const resultFirst = await this.localCompare.afterScreenshot({}, this.screenshotBase);
+        const resultFirst = await this.localCompare.processScreenshot({}, this.screenshotBase);
 
         // check if reference was created
         const existsReference = await fs.exists(this.screenshotFile);
@@ -252,7 +252,7 @@ describe('LocalCompare', function () {
 
       it('reports equal when in tolerance', async function () {
         // compare screenshots
-        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotToleranceDefaultWithin);
+        const result = await this.localCompare.processScreenshot(this.context, this.screenshotToleranceDefaultWithin);
 
         // check diff results
         assert.isAtMost(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
@@ -266,7 +266,7 @@ describe('LocalCompare', function () {
 
       it('reports diff when NOT in tolerance', async function () {
         // compare screenshots
-        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotToleranceDefaultOutside);
+        const result = await this.localCompare.processScreenshot(this.context, this.screenshotToleranceDefaultOutside);
 
         // check diff results
         assert.isAbove(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
@@ -292,7 +292,7 @@ describe('LocalCompare', function () {
         });
 
         // 1st run -> create reference
-        const resultFirst = await this.localCompare.afterScreenshot({}, this.screenshotBase);
+        const resultFirst = await this.localCompare.processScreenshot({}, this.screenshotBase);
 
         // check if reference was created
         const existsReference = await fs.exists(this.screenshotFile);
@@ -301,7 +301,7 @@ describe('LocalCompare', function () {
 
       it('reports equal when in tolerance', async function () {
         // compare screenshots
-        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotToleranceCustomWithin);
+        const result = await this.localCompare.processScreenshot(this.context, this.screenshotToleranceCustomWithin);
 
         // check diff results
         assert.isAtMost(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
@@ -315,7 +315,7 @@ describe('LocalCompare', function () {
 
       it('reports diff when NOT in tolerance', async function () {
         // compare screenshots
-        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotToleranceCustomOutside);
+        const result = await this.localCompare.processScreenshot(this.context, this.screenshotToleranceCustomOutside);
 
         // check diff results
         assert.isAbove(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
@@ -344,7 +344,7 @@ describe('LocalCompare', function () {
         });
 
         // 1st run -> create reference
-        const resultFirst = await this.localCompare.afterScreenshot({}, this.screenshotBase);
+        const resultFirst = await this.localCompare.processScreenshot({}, this.screenshotBase);
 
         // check if reference was created
         const existsReference = await fs.exists(this.screenshotFile);
@@ -353,7 +353,7 @@ describe('LocalCompare', function () {
 
       it('reports equal when in tolerance', async function () {
         // compare screenshots
-        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotToleranceCustomWithin);
+        const result = await this.localCompare.processScreenshot(this.context, this.screenshotToleranceCustomWithin);
 
         // check diff results
         assert.isAtMost(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
@@ -367,7 +367,7 @@ describe('LocalCompare', function () {
 
       it('reports diff when NOT in tolerance', async function () {
         // compare screenshots
-        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotToleranceCustomOutside);
+        const result = await this.localCompare.processScreenshot(this.context, this.screenshotToleranceCustomOutside);
 
         // check diff results
         assert.isAbove(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
@@ -409,7 +409,7 @@ describe('LocalCompare', function () {
         });
 
         // 1st run -> create reference
-        const resultFirst = await this.localCompare.afterScreenshot({}, this.screenshotRed);
+        const resultFirst = await this.localCompare.processScreenshot({}, this.screenshotRed);
 
         // check if reference was created
         const existsReference = await fs.exists(this.screenshotFile);
@@ -418,7 +418,7 @@ describe('LocalCompare', function () {
 
       it('reports diff when colors differs', async function () {
         // compare screenshots
-        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotRed2);
+        const result = await this.localCompare.processScreenshot(this.context, this.screenshotRed2);
 
         // check diff results
         assert.isAbove(result.misMatchPercentage, 0, 'Images should diff');
@@ -444,7 +444,7 @@ describe('LocalCompare', function () {
         });
 
         // 1st run -> create reference
-        const resultFirst = await this.localCompare.afterScreenshot({}, this.screenshotRed);
+        const resultFirst = await this.localCompare.processScreenshot({}, this.screenshotRed);
 
         // check if reference was created
         const existsReference = await fs.exists(this.screenshotFile);
@@ -453,7 +453,7 @@ describe('LocalCompare', function () {
 
       it('reports equal with ignoreComparison=colors when colors differs', async function () {
         // compare screenshots
-        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotRed2);
+        const result = await this.localCompare.processScreenshot(this.context, this.screenshotRed2);
         // check diff results
         assert.isTrue(result.isExactSameImage, 'Images should not diff');
         assert.isTrue(result.isWithinMisMatchTolerance, 'Diff should be in tolerance');
@@ -480,7 +480,7 @@ describe('LocalCompare', function () {
         });
 
         // 1st run -> create reference
-        const resultFirst = await this.localCompare.afterScreenshot({}, this.screenshotRed);
+        const resultFirst = await this.localCompare.processScreenshot({}, this.screenshotRed);
 
         // check if reference was created
         const existsReference = await fs.exists(this.screenshotFile);
@@ -489,7 +489,7 @@ describe('LocalCompare', function () {
 
       it('reports equal with ignoreComparison=colors when colors differs', async function () {
         // compare screenshots
-        const result = await this.localCompare.afterScreenshot(this.context, this.screenshotRed2);
+        const result = await this.localCompare.processScreenshot(this.context, this.screenshotRed2);
 
         // check diff results
         assert.isTrue(result.isExactSameImage, 'Images should not diff');

@@ -115,17 +115,20 @@ function assertMeta(meta, type, options) {
 describe('VisualRegressionLauncher - custom compare method & hooks', function () {
 
   beforeEach(function () {
-    const { before, beforeScreenshot, afterScreenshot, after } = compareStubs;
+    const { before, beforeScreenshot, afterScreenshot, processScreenshot, after } = compareStubs;
 
     this.beforeStub = before;
     this.beforeScreenshotStub = beforeScreenshot;
     this.afterScreenshotStub = afterScreenshot;
+    this.processScreenshotStub = processScreenshot;
     this.afterStub = after;
 
     this.beforeScreenshotStub.reset();
     this.beforeScreenshotStub.resetBehavior();
     this.afterScreenshotStub.reset();
     this.afterScreenshotStub.resetBehavior();
+    this.processScreenshotStub.reset();
+    this.processScreenshotStub.resetBehavior();
 
     this.expectedResult = {
       misMatchPercentage: 10.5,
@@ -202,11 +205,31 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     assert.isString(base64Screenshot, 'Screenshot should be a base64 string');
   });
 
+  it('calls processScreenshot hook', async function () {
+    assert.isTrue(this.processScreenshotStub.notCalled);
+
+    const options = {};
+    const results = await browser.checkDocument();
+
+    assert.isTrue(this.processScreenshotStub.calledAfter(this.afterScreenshotStub));
+
+    // each hook should be called once for this command
+    assert.isTrue(this.processScreenshotStub.calledOnce, 'processScreenshot hook should be called once');
+
+    const processScreenshotArgs = this.processScreenshotStub.args[0];
+
+    assert.lengthOf(processScreenshotArgs, 2);
+
+    const [screenshotContext, base64Screenshot] = processScreenshotArgs;
+    assertScreenshotContext(options, TYPE_DOCUMENT, screenshotContext);
+    assert.isString(base64Screenshot, 'Screenshot should be a base64 string');
+  });
+
   it.skip('calls onComplete hook', function () {
     // untestable cause this will be executed after tests on launcher process :D
   });
 
-  it('returns result from afterScreenshot hook', async function () {
+  it('returns result from processScreenshot hook', async function () {
     const expectedResult = {
       misMatchPercentage: 10.05,
       isWithinMisMatchTolerance: false,
@@ -214,7 +237,7 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
       isExactSameImage: true,
     };
 
-    this.afterScreenshotStub.returns(expectedResult);
+    this.processScreenshotStub.returns(expectedResult);
 
     const options = {};
     const results = await browser.checkDocument();
