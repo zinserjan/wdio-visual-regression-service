@@ -27,7 +27,6 @@ export default class Spectre extends BaseCompare {
     const result = await this.spectreClient.createTestrun(this.project, this.suite);
     log(`${creationOptions} - Testrun created - Run-Id: #${result.id}`);
     this.saveRuntimeConfig(runtimeConfigName, result);
-    log(`${creationOptions} - Saved Run-Id #${result.id} to ${this.getRuntimeConfigFileName(runtimeConfigName)}`);
   }
 
   async processScreenshot(context, base64Screenshot) {

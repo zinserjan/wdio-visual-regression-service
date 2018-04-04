@@ -1,6 +1,8 @@
 import fs from 'fs-extra';
 import path from 'path';
+import debug from 'debug';
 
+const log = debug('wdio-visual-regression-service:BaseCompare');
 const runtimeConfigPath = __dirname;
 
 export default class BaseCompare {
@@ -64,6 +66,7 @@ export default class BaseCompare {
    */
   async saveRuntimeConfig(name, config) {
     const file = this.getRuntimeConfigFileName(name);
+    log(`Save runtime config ${name} to file ${file}`);
     await fs.writeJson(file, config, {
       spaces: 2
     });
@@ -76,10 +79,12 @@ export default class BaseCompare {
   async getRuntimeConfig(name) {
     // try to read from cache first
     if (this.configs.has(name)) {
+      log(`Read runtime config ${name} from cache`);
       return this.configs.get(name);
     }
     // otherwise read from fs
     const file = this.getRuntimeConfigFileName(name);
+    log(`Read runtime config ${name} from file ${file}`);
     const config = await fs.readJson(file);
     // and cache the result
     this.configs.set(name, config);
@@ -92,6 +97,7 @@ export default class BaseCompare {
   async removeRuntimeConfig(name) {
     // delete from fs
     const file = this.getRuntimeConfigFileName(name);
+    log(`Remove runtime config ${name} file ${file}`);
     await fs.remove(file);
     // delete from cache
     this.configs.delete(name);
