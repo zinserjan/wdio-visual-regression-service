@@ -9,9 +9,7 @@ import SaveScreenshot from '../../../src/methods/SaveScreenshot';
 const dirTmp = path.join(process.cwd(), '.tmp');
 const dirFixture = path.join(__dirname, '../../fixture/');
 
-const BASE_PATH = "/Users/silne30/Desktop/wdio-visual-regression-service/.tmp/";
-const REFERENCE_SCREENSHOT = BASE_PATH + "reference.png";
-const ACTUAL_SCREENSHOT = BASE_PATH + "screenshot.png";
+const ACTUAL_SCREENSHOT = path.join(dirTmp, "screenshot.png");
 
 async function readAsBase64(file) {
   // read binary data

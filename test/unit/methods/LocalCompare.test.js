@@ -11,10 +11,9 @@ import LocalCompare from '../../../src/methods/LocalCompare';
 const dirTmp = path.join(process.cwd(), '.tmp');
 const dirFixture = path.join(__dirname, '../../fixture/');
 
-const BASE_PATH = "/Users/silne30/Desktop/wdio-visual-regression-service/.tmp/";
-const REFERENCE_SCREENSHOT = BASE_PATH + "reference.png";
-const ACTUAL_SCREENSHOT = BASE_PATH + "screenshot.png";
-const DIFF_SCREENSHOT = BASE_PATH + "diff.png";
+const REFERENCE_SCREENSHOT = path.join(dirTmp, "reference.png");
+const ACTUAL_SCREENSHOT = path.join(dirTmp, "screenshot.png");
+const DIFF_SCREENSHOT = path.join(dirTmp, "diff.png");
 
 async function readAsBase64(file) {
   // read binary data
