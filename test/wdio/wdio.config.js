@@ -11,7 +11,7 @@ exports.config = {
   capabilities: [
     {
       browserName: 'phantomjs',
-      'phantomjs.binary.path': require('phantomjs').path,
+      'phantomjs.binary.path': require('phantomjs-prebuilt').path,
     }
   ],
   sync: false,

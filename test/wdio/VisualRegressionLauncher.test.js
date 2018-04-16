@@ -231,11 +231,13 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
 
   it('returns result from processScreenshot hook', async function () {
     const expectedResult = {
+      filePaths: {},
       misMatchPercentage: 10.05,
       isWithinMisMatchTolerance: false,
       isSameDimensions: true,
       isExactSameImage: true,
     };
+
 
     this.processScreenshotStub.returns(expectedResult);
 

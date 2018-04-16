@@ -40,6 +40,7 @@
     "lodash": "^4.13.1",
     "node-resemble-js": "0.0.5",
     "nodeclient-spectre": "^1.0.3",
+    "phantomjs-prebuilt": "^2.1.16",
     "platform": "^1.3.1",
     "wdio-screenshot": "^0.6.0"
   },
@@ -55,7 +56,6 @@
     "mocha": "^2.4.5",
     "nock": "^9.2.3",
     "np": "^2.10.0",
-    "phantomjs": "^1.9.20",
     "rimraf": "^2.5.2",
     "sinon": "^1.17.4",
     "wdio-mocha-framework": "^0.3.1",
