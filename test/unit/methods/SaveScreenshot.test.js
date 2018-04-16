@@ -9,6 +9,9 @@ import SaveScreenshot from '../../../src/methods/SaveScreenshot';
 const dirTmp = path.join(process.cwd(), '.tmp');
 const dirFixture = path.join(__dirname, '../../fixture/');
 
+const BASE_PATH = "/Users/silne30/Desktop/wdio-visual-regression-service/.tmp/";
+const REFERENCE_SCREENSHOT = BASE_PATH + "reference.png";
+const ACTUAL_SCREENSHOT = BASE_PATH + "screenshot.png";
 
 async function readAsBase64(file) {
   // read binary data
@@ -40,7 +43,7 @@ describe('SaveScreenshot', function () {
 
   context('processScreenshot', function () {
     beforeEach(async function() {
-      this.referencFile = path.join(dirTmp, 'reference.png');
+      this.referencFile = path.join(dirTmp, 'screenshot.png');
       this.getReferenceFile = stub().returns(this.referencFile);
 
       this.saveScreenshot = new SaveScreenshot({
@@ -48,11 +51,15 @@ describe('SaveScreenshot', function () {
       });
 
       this.resultIdentical = {
+        filePaths: {
+          actual: ACTUAL_SCREENSHOT
+        },
         misMatchPercentage: 0,
         isWithinMisMatchTolerance: true,
         isSameDimensions: true,
         isExactSameImage: true
       };
+
     });
 
     it('creates a reference file for the first run', async function () {

@@ -46,11 +46,11 @@ export default class Spectre extends BaseCompare {
 
     if (result.pass) {
       log(`${uploadName} - Image is within tolerance or the same`);
-      return this.createResultReport(result.diff, result.pass, true);
     } else {
       log(`${uploadName} - Image is different! ${result.diff}%`);
-      return this.createResultReport(result.diff, result.pass, true);
     }
+
+    return this.createResultReport(null, result.diff, result.pass, true);
   }
 
   async onComplete() {

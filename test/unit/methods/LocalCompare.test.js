@@ -11,6 +11,9 @@ import LocalCompare from '../../../src/methods/LocalCompare';
 const dirTmp = path.join(process.cwd(), '.tmp');
 const dirFixture = path.join(__dirname, '../../fixture/');
 
+const BASE_PATH = "/Users/silne30/Desktop/wdio-visual-regression-service/.tmp/";
+const REFERENCE_SCREENSHOT = BASE_PATH + "reference.png";
+const ACTUAL_SCREENSHOT = BASE_PATH + "screenshot.png";
 
 async function readAsBase64(file) {
   // read binary data
@@ -18,7 +21,6 @@ async function readAsBase64(file) {
   // convert binary data to base64 encoded string
   return new Buffer(content).toString('base64');
 }
-
 
 
 describe('LocalCompare', function () {
@@ -52,6 +54,10 @@ describe('LocalCompare', function () {
       });
 
       this.resultIdentical = {
+        filePaths: {
+          actual: ACTUAL_SCREENSHOT,
+          reference: REFERENCE_SCREENSHOT
+        },
         misMatchPercentage: 0,
         isWithinMisMatchTolerance: true,
         isSameDimensions: true,
