@@ -50,7 +50,7 @@ export default class LocalCompare extends BaseCompare {
         log(`Image is different! ${misMatchPercentage}%`);
         const png = compareData.getDiffImage().pack();
         await this.writeDiff(png, diffPath);
-        fileNames.difference = diffPath;
+        fileNames.diff = diffPath;
 
         return this.createResultReport(fileNames, misMatchPercentage, false, isSameDimensions);
       } else {

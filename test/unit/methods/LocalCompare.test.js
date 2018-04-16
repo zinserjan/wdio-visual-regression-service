@@ -14,6 +14,7 @@ const dirFixture = path.join(__dirname, '../../fixture/');
 const BASE_PATH = "/Users/silne30/Desktop/wdio-visual-regression-service/.tmp/";
 const REFERENCE_SCREENSHOT = BASE_PATH + "reference.png";
 const ACTUAL_SCREENSHOT = BASE_PATH + "screenshot.png";
+const DIFF_SCREENSHOT = BASE_PATH + "diff.png";
 
 async function readAsBase64(file) {
   // read binary data
@@ -62,6 +63,14 @@ describe('LocalCompare', function () {
         isWithinMisMatchTolerance: true,
         isSameDimensions: true,
         isExactSameImage: true
+      };
+
+      this.resultDiff = {
+        filePaths: {
+          actual: ACTUAL_SCREENSHOT,
+          reference: REFERENCE_SCREENSHOT,
+          diff: DIFF_SCREENSHOT
+        }
       };
     });
 
@@ -181,7 +190,12 @@ describe('LocalCompare', function () {
       assert.isTrue(existsDiff, 'Diff screenshot should exists');
 
       // check if diff is correct
-      await compareImages(this.diffFile, path.join(dirFixture, 'image/100x100-diff.png'))
+      await compareImages(this.diffFile, path.join(dirFixture, 'image/100x100-diff.png'));
+
+
+
+      //check if returned filePaths correct
+      assert.deepEqual(this.resultDiff.filePaths, resultSecond.filePaths, 'Returned filepath should include diff')
     });
 
     it('deletes existing diff image when image is in tolerance now', async function () {
