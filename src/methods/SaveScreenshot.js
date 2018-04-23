@@ -15,12 +15,12 @@ export default class SaveScreenshot extends BaseCompare {
     const screenshotPath = this.getScreenshotFile(context);
 
     const fileNames = {
-      actual: screenshotPath
+      screenshot: screenshotPath
     };
 
     log(`create screenshot file at ${screenshotPath}`);
     await fs.outputFile(screenshotPath, base64Screenshot, 'base64');
-    return this.createResultReport(fileNames, 0, true, true);
+    return this.createResultReport(0, true, true, fileNames);
   }
 
 }

@@ -49,13 +49,13 @@ describe('SaveScreenshot', function () {
       });
 
       this.resultIdentical = {
-        filePaths: {
-          actual: ACTUAL_SCREENSHOT
-        },
         misMatchPercentage: 0,
         isWithinMisMatchTolerance: true,
         isSameDimensions: true,
-        isExactSameImage: true
+        isExactSameImage: true,
+        filePaths: {
+          screenshot: ACTUAL_SCREENSHOT
+        }
       };
 
     });

@@ -115,7 +115,11 @@ describe('Spectre', function () {
       });
 
     const context = {};
-    const filePaths = null; //since no filepaths given
+    const filePaths = {
+      screenshot: null,
+      diff: null,
+      reference: null
+    }; //since no filepaths given
 
     const resultIdentitical = await instance.processScreenshot(context, base64Screenshot1);
     assert.strictEqual(this.getTest.callCount, 1, 'test getter should be called once');
@@ -126,11 +130,11 @@ describe('Spectre', function () {
     assert.isTrue(this.getSize.calledWithExactly(context), 'size getter should receive context as arg');
 
     assert.deepEqual(resultIdentitical, {
-      filePaths: filePaths,
       misMatchPercentage: 0,
       isWithinMisMatchTolerance: true,
       isSameDimensions: true,
-      isExactSameImage: true
+      isExactSameImage: true,
+      filePaths: filePaths
     }, 'Result should be reported');
 
     nock(this.url)
