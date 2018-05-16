@@ -10,9 +10,6 @@ import { createTestMethodInstance } from '../../helper/compareMethod';
 
 const dirFixture = path.join(__dirname, '../../fixture/');
 
-const BASE_PATH = "/Users/silne30/Desktop/wdio-visual-regression-service/.tmp/";
-const REFERENCE_SCREENSHOT = BASE_PATH + "reference.png";
-const ACTUAL_SCREENSHOT = BASE_PATH + "screenshot.png";
 
 async function readAsBase64(file) {
   // read binary data
@@ -115,11 +112,6 @@ describe('Spectre', function () {
       });
 
     const context = {};
-    const filePaths = {
-      screenshot: null,
-      diff: null,
-      reference: null
-    }; //since no filepaths given
 
     const resultIdentitical = await instance.processScreenshot(context, base64Screenshot1);
     assert.strictEqual(this.getTest.callCount, 1, 'test getter should be called once');
@@ -133,8 +125,7 @@ describe('Spectre', function () {
       misMatchPercentage: 0,
       isWithinMisMatchTolerance: true,
       isSameDimensions: true,
-      isExactSameImage: true,
-      filePaths: filePaths
+      isExactSameImage: true
     }, 'Result should be reported');
 
     nock(this.url)
@@ -171,7 +162,6 @@ describe('Spectre', function () {
     assert.isTrue(this.getSize.calledWithExactly(context), 'size getter should receive context as arg');
 
     assert.deepEqual(resultDifferent, {
-      filePaths: filePaths,
       misMatchPercentage: 4.56,
       isWithinMisMatchTolerance: false,
       isSameDimensions: true,

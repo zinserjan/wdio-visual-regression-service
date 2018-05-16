@@ -53,9 +53,7 @@ describe('SaveScreenshot', function () {
         isWithinMisMatchTolerance: true,
         isSameDimensions: true,
         isExactSameImage: true,
-        filePaths: {
-          screenshot: ACTUAL_SCREENSHOT
-        }
+        screenshot: ACTUAL_SCREENSHOT
       };
 
     });

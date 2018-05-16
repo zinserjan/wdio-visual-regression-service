@@ -50,13 +50,7 @@ export default class Spectre extends BaseCompare {
       log(`${uploadName} - Image is different! ${result.diff}%`);
     }
 
-    const filenames = {
-      screenshot: null,
-      reference: null,
-      diff: null
-    };
-
-    return this.createResultReport(result.diff, result.pass, true, filenames);
+    return this.createResultReport(result.diff, result.pass, true);
   }
 
   async onComplete() {

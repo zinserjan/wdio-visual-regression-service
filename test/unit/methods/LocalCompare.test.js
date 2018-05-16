@@ -58,19 +58,15 @@ describe('LocalCompare', function () {
         isWithinMisMatchTolerance: true,
         isSameDimensions: true,
         isExactSameImage: true,
-        filePaths: {
-          screenshot: ACTUAL_SCREENSHOT,
-          diff: null,
-          reference: REFERENCE_SCREENSHOT
-        }
-      };
+        screenshot: ACTUAL_SCREENSHOT,
+        diff: null,
+        reference: REFERENCE_SCREENSHOT
+        };
 
       this.resultDiff = {
-        filePaths: {
-          screenshot: ACTUAL_SCREENSHOT,
-          reference: REFERENCE_SCREENSHOT,
-          diff: DIFF_SCREENSHOT
-        }
+        screenshot: ACTUAL_SCREENSHOT,
+        reference: REFERENCE_SCREENSHOT,
+        diff: DIFF_SCREENSHOT
       };
     });
 
