@@ -31,7 +31,7 @@ export default class LocalCompare extends BaseCompare {
       diff: null
     };
 
-    const options = Object.assign({}, fileNames);
+    const reportOptions = Object.assign({}, fileNames);
 
     if (referenceExists) {
       log('reference exists, compare it with the taken now');
@@ -50,20 +50,20 @@ export default class LocalCompare extends BaseCompare {
         log(`Image is different! ${misMatchPercentage}%`);
         const png = compareData.getDiffImage().pack();
         await this.writeDiff(png, diffPath);
-        options.diff = diffPath;
+        reportOptions.diff = diffPath;
 
-        return this.createResultReport(misMatchPercentage, false, isSameDimensions, options);
+        return this.createResultReport(misMatchPercentage, false, isSameDimensions, reportOptions);
       } else {
         log(`Image is within tolerance or the same`);
         await fs.remove(diffPath);
 
-        return this.createResultReport(misMatchPercentage, true, isSameDimensions, options);
+        return this.createResultReport(misMatchPercentage, true, isSameDimensions, reportOptions);
       }
 
     } else {
       log('first run - create reference file');
       await fs.outputFile(referencePath, base64Screenshot, 'base64');
-      return this.createResultReport(0, true, true, options);
+      return this.createResultReport(0, true, true, reportOptions);
     }
   }
 
