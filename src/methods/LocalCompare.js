@@ -25,7 +25,6 @@ export default class LocalCompare extends BaseCompare {
 
     const referenceExists = await fs.exists(referencePath);
 
-
     const fileNames = {
       reference: referencePath,
       screenshot: screenshotPath,
@@ -46,7 +45,6 @@ export default class LocalCompare extends BaseCompare {
       const misMatchTolerance = _.get(context, 'options.misMatchTolerance', this.misMatchTolerance);
 
       const diffPath = this.getDiffFile(context);
-
 
       if (misMatchPercentage > misMatchTolerance) {
         log(`Image is different! ${misMatchPercentage}%`);
