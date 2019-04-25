@@ -225,7 +225,7 @@ available:
 * **viewportChangePause**  `Number` <br>
     Overrides the global *viewportChangePause* value for this command. Wait x milliseconds after viewport change.
 
-###Cucumber Step Definitions
+### Cucumber Step Definitions
 ```js
 import {defineSupportCode} from 'cucumber';
 
@@ -244,7 +244,8 @@ browser.checkDocument();
 });
 ```
 
-###Q&A
+### Q&A
+
 **If there are errors while saving PDF document screenshot from wdio-screenshot, how to handle it?**
 
 Change the height of the pdf files in 'ScreenDimension.js'; For example:
