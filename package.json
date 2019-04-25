@@ -41,7 +41,8 @@
     "node-resemble-js": "0.0.5",
     "nodeclient-spectre": "^1.0.3",
     "platform": "^1.3.1",
-    "wdio-screenshot": "^0.6.0"
+    "wdio-screenshot": "^0.6.0",
+    "wdio-cucumber-framework": "1.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",

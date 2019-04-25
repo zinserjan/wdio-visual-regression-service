@@ -59,7 +59,22 @@ exports.config = {
   // ...
 };
 ```
+Note: If Cucumber has been integrated and tests run part of BDD feature files, please use the function with feature name configured as below:
+```js
+function getScreenshotName(basePath) {
+  return function(context) {
+    var type = context.type;
+    var featureName = context.feature.name;
+    var browserVersion = parseInt(context.browser.version, 10);
+    var browserName = context.browser.name;
+    var browserViewport = context.meta.viewport;
+    var browserWidth = browserViewport.width;
+    var browserHeight = browserViewport.height;
 
+    return path.join(basePath, `${featureName}_${type}_${browserName}_v${browserVersion}_${browserWidth}x${browserHeight}.png`);
+  };
+}
+```
 ### Options
 Under the key `visualRegression` in your wdio.config.js you can pass a configuration object with the following structure:
 
@@ -209,6 +224,32 @@ available:
 
 * **viewportChangePause**  `Number` <br>
     Overrides the global *viewportChangePause* value for this command. Wait x milliseconds after viewport change.
+
+### Cucumber Step Definitions
+```js
+import {defineSupportCode} from 'cucumber';
+
+defineSupportCode(({Given, When, Then}) => {
+Then(/^I perform visual regression test on view ports$/, function () {
+browser.checkViewport();
+});
+Then(/^I perform visual regression test on the element "([^"]*)"$/, function (selector) {
+browser.checkElement(selector);
+});
+Then(/^I perform visual regression test on the document$/, function () {
+browser.checkDocument();
+});
+
+
+});
+```
+
+### Q&A
+
+**If there are errors while saving PDF document screenshot from wdio-screenshot, how to handle it?**
+
+Change the height of the pdf files in 'ScreenDimension.js'; For example:
+this.documentHeight:2324
 
 ### License
 
