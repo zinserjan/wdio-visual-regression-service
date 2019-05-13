@@ -5,6 +5,7 @@ export const before = stub();
 export const beforeScreenshot = stub();
 export const afterScreenshot = stub();
 export const processScreenshot = stub();
+export const reportScreenshot = stub();
 export const after = stub();
 
 /**
@@ -22,6 +23,7 @@ export function createTestMethodInstance(Clazz, ...options) {
     beforeScreenshot: (...args) => worker.beforeScreenshot(...args),
     afterScreenshot: (...args) => worker.afterScreenshot(...args),
     processScreenshot: (...args) => worker.processScreenshot(...args),
+    reportScreenshot: (...args) => worker.reportScreenshot(...args),
     after: (...args) => worker.after(...args),
     onComplete: () => launcher.onComplete()
   }

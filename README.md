@@ -81,7 +81,7 @@ wdio-visual-regression-service allows the usage of different screenshot comparis
 #### VisualRegressionCompare.LocalCompare
 As it's name suggests *LocalCompare* captures screenshots locally on your computer and compares them against previous runs.
 
-You can pass the following options to it's constructor as object:
+You can pass the following options to its constructor as an object:
 
 * **referenceName** `Function` <br>
 pass in a function that returns the filename for the reference screenshot. Function receives a *context* object as first parameter with all relevant information about the command.
@@ -112,7 +112,7 @@ pass in a function that returns the filename for the current screenshot. Functio
 This method is used for uploading screenshots to the web application [Spectre](https://github.com/wearefriday/spectre).
 Spectre is a UI for visual regression testing. It stores the screenshots and compares them which is quite useful for Continuous Integration.
 
-You can pass the following options to it's constructor as object:
+You can pass the following options to its constructor as an object:
 
 * **url** `String` <br>
 pass in a spectre webservice url.
@@ -171,6 +171,76 @@ exports.config = {
 };
 ```
 
+#### VisualRegressionCompare.BackstopJS
+This method generates a BackstopJS report UI for visual regression testing. It displays before, after, and diff images side by side with a scrubber tool that makes understanding visual differences easier.
+
+You can pass the following options to its constructor as an object:
+
+* **referenceName** `Function` <br>
+pass in a function that returns the filename for the reference screenshot. Function receives a *context* object as first parameter with all relevant information about the command.
+
+* **screenshotName** `Function` <br>
+pass in a function that returns the filename for the current screenshot. Function receives a *context* object as first parameter with all relevant information about the command.
+
+* **diffName** `Function` <br>
+pass in a function that returns the filename for the diff screenshot. Function receives a *context* object as first parameter with all relevant information about the command.
+
+* **misMatchTolerance** `Number`  ( default: 0.01 ) <br>
+number between 0 and 100 that defines the degree of mismatch to consider two images as identical, increasing this value will decrease test coverage.
+
+* **htmlReport** `String` (default: html_report) <br>
+pass in an optional directory to write the html report to.
+
+* **openReport** `Boolean` (default: true) <br>
+pass in a boolean to control whether the report opens in a browser at the end of the test.
+
+* **suite** `String` (default: BackstopJS) <br>
+pass in an optional name for the test suite.
+
+**Example**
+```js
+// wdio.conf.js
+
+var path = require('path');
+var VisualRegressionCompare = require('wdio-visual-regression-service/compare');
+
+function getScreenshotName(basePath) {
+  return function(context) {
+    var type = context.type;
+    var testName = context.test.title;
+    var browserVersion = parseInt(context.browser.version, 10);
+    var browserName = context.browser.name;
+    var browserViewport = context.meta.viewport;
+    var browserWidth = browserViewport.width;
+    var browserHeight = browserViewport.height;
+
+    return path.join(basePath, `${testName}_${type}_${browserName}_v${browserVersion}_${browserWidth}x${browserHeight}.png`);
+  };
+}
+
+exports.config = {
+  // ...
+  services: [
+    'visual-regression',
+  ],
+  visualRegression: {
+    compare: new VisualRegressionCompare.BackstopJS({
+      referenceName: getScreenshotName(path.join(process.cwd(), 'screenshots/reference')),
+      screenshotName: getScreenshotName(path.join(process.cwd(), 'screenshots/screen')),
+      diffName: getScreenshotName(path.join(process.cwd(), 'screenshots/diff')),
+      misMatchTolerance: 0.01,
+      htmlReport: 'report',
+      openReport: false,
+      suite: 'Test Suite'
+    }),
+    viewportChangePause: 300,
+    viewports: [{ width: 320, height: 480 }, { width: 480, height: 320 }, { width: 1024, height: 768 }],
+    orientations: ['landscape', 'portrait'],
+  },
+  // ...
+};
+```
+
 ## Usage
 wdio-visual-regression-service enhances an WebdriverIO instance with the following commands:
 * `browser.checkViewport([{options}]);`
@@ -209,6 +279,9 @@ available:
 
 * **viewportChangePause**  `Number` <br>
     Overrides the global *viewportChangePause* value for this command. Wait x milliseconds after viewport change.
+
+* **selector** `String` <br>
+    BackstopJS only value which tags a screenshot with the given selector name for the report UI.
 
 ### License
 

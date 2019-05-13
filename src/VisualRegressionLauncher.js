@@ -242,7 +242,9 @@ export default class VisualRegressionLauncher {
           return [screenshotContextCleaned, base64Screenshot];
         },
         async function processScreenshot(screenshotContextCleaned, base64Screenshot) {
-          return await runHook('processScreenshot', screenshotContextCleaned, base64Screenshot);
+          const result = await runHook('processScreenshot', screenshotContextCleaned, base64Screenshot);
+          await runHook('reportScreenshot', result, screenshotContextCleaned);
+          return result;
         }
       );
       return results;
