@@ -2,7 +2,7 @@ import debug from 'debug';
 import _ from 'lodash';
 import fs from 'fs-extra';
 import path from 'path';
-import open from 'open';
+import open from 'opn';
 import LocalCompare from './LocalCompare';
 
 const log = debug('wdio-visual-regression-service:BackstopJS');
