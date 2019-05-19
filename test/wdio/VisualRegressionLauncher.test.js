@@ -115,12 +115,13 @@ function assertMeta(meta, type, options) {
 describe('VisualRegressionLauncher - custom compare method & hooks', function () {
 
   beforeEach(function () {
-    const { before, beforeScreenshot, afterScreenshot, processScreenshot, after } = compareStubs;
+    const { before, beforeScreenshot, afterScreenshot, processScreenshot, reportScreenshot, after } = compareStubs;
 
     this.beforeStub = before;
     this.beforeScreenshotStub = beforeScreenshot;
     this.afterScreenshotStub = afterScreenshot;
     this.processScreenshotStub = processScreenshot;
+    this.reportScreenshotStub = reportScreenshot;
     this.afterStub = after;
 
     this.beforeScreenshotStub.reset();
@@ -129,6 +130,8 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     this.afterScreenshotStub.resetBehavior();
     this.processScreenshotStub.reset();
     this.processScreenshotStub.resetBehavior();
+    this.reportScreenshotStub.reset();
+    this.reportScreenshotStub.resetBehavior();
 
     this.expectedResult = {
       misMatchPercentage: 10.5,
@@ -223,6 +226,35 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     const [screenshotContext, base64Screenshot] = processScreenshotArgs;
     assertScreenshotContext(options, TYPE_DOCUMENT, screenshotContext);
     assert.isString(base64Screenshot, 'Screenshot should be a base64 string');
+  });
+
+  it('calls reportScreenshot hook', async function () {
+    assert.isTrue(this.processScreenshotStub.notCalled);
+
+    const expectedResult = {
+      misMatchPercentage: 10.05,
+      isWithinMisMatchTolerance: false,
+      isSameDimensions: true,
+      isExactSameImage: true,
+    };
+
+    this.processScreenshotStub.returns(expectedResult);
+
+    const options = {};
+    const results = await browser.checkDocument();
+
+    assert.isTrue(this.reportScreenshotStub.calledAfter(this.processScreenshotStub));
+
+    // each hook should be called once for this command
+    assert.isTrue(this.reportScreenshotStub.calledOnce, 'reportScreenshot hook should be called once');
+
+    const reportScreenshotArgs = this.reportScreenshotStub.args[0];
+
+    assert.lengthOf(reportScreenshotArgs, 2);
+
+    const [result, screenshotContext] = reportScreenshotArgs;
+    assert.strictEqual(result, expectedResult);
+    assertScreenshotContext(options, TYPE_DOCUMENT, screenshotContext);
   });
 
   it.skip('calls onComplete hook', function () {
