@@ -2,7 +2,7 @@ import debug from 'debug';
 import _ from 'lodash';
 import fs from 'fs-extra';
 import path from 'path';
-import open from 'opn';
+import open from 'open';
 import LocalCompare from './LocalCompare';
 
 const log = debug('wdio-visual-regression-service:BackstopJS');
@@ -121,9 +121,9 @@ export default class BackstopJS extends LocalCompare {
   /**
    * Open the BackstopJS report in a browser
    */
-  openReport() {
+  async openReport() {
     const compareReportURL = path.join(this.htmlReport, 'index.html');
     console.log(`Opening ${compareReportURL}`)
-    return open(compareReportURL, { wait: false });
+    return await open(compareReportURL, { wait: false });
   }
 }
