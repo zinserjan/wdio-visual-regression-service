@@ -24,5 +24,5 @@ export function createTestMethodInstance(Clazz, ...options) {
     processScreenshot: (...args) => worker.processScreenshot(...args),
     after: (...args) => worker.after(...args),
     onComplete: () => launcher.onComplete()
-  }
+  };
 }

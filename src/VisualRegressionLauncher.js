@@ -1,13 +1,16 @@
 import _ from 'lodash';
 import { parse as parsePlatform } from 'platform';
-import { makeElementScreenshot, makeDocumentScreenshot, makeViewportScreenshot } from 'wdio-screenshot';
+import makeElementScreenshot from './modules/makeElementScreenshot';
+import makeDocumentScreenshot from './modules/makeDocumentScreenshot';
+import makeViewportScreenshot from './modules/makeViewportScreenshot';
+import logger from '@wdio/logger';
 
 import getUserAgent from './scripts/getUserAgent';
 import { mapViewports, mapOrientations } from './modules/mapViewports';
 
+const log = logger('wdio-visual-regression-service');
 
-export default class VisualRegressionLauncher {
-
+class VisualRegressionLauncher {
   constructor() {
     this.currentSuite = null;
     this.currentTest = null;
@@ -23,7 +26,9 @@ export default class VisualRegressionLauncher {
    */
   async onPrepare(config) {
     this.validateConfig(config);
+    log.setLevel(config.logLevel || 'info');
     this.compare = config.visualRegression.compare;
+    log.info('Launching onPrepare functions');
     await this.runHook('onPrepare');
   }
 
@@ -36,13 +41,13 @@ export default class VisualRegressionLauncher {
    * @return {Promise}
    */
   async before(capabilities, specs) {
-    this.validateConfig(browser.options);
+    this.validateConfig(browser.config);
 
-    this.compare = browser.options.visualRegression.compare;
-    this.viewportChangePause = _.get(browser.options, 'visualRegression.viewportChangePause', 100);
-    this.viewports = _.get(browser.options, 'visualRegression.viewports');
-    this.orientations = _.get(browser.options, 'visualRegression.orientations');
-    const userAgent = (await browser.execute(getUserAgent)).value;
+    this.compare = browser.config.visualRegression.compare;
+    this.viewportChangePause = _.get(browser.config, 'visualRegression.viewportChangePause', 100);
+    this.viewports = _.get(browser.config, 'visualRegression.viewports');
+    this.orientations = _.get(browser.config, 'visualRegression.orientations');
+    const userAgent = await browser.execute(getUserAgent);
     const { name, version, ua } = parsePlatform(userAgent);
 
     this.context = {
@@ -66,7 +71,7 @@ export default class VisualRegressionLauncher {
    * Hook that gets executed before the suite starts
    * @param {Object} suite suite details
    */
-  beforeSuite (suite) {
+  beforeSuite(suite) {
     this.currentSuite = suite;
   }
 
@@ -142,7 +147,6 @@ export default class VisualRegressionLauncher {
     this.currentStep = null;
   }
 
-
   /**
    * Gets executed after all tests are done. You still have access to all global
    * variables from the test.
@@ -166,12 +170,12 @@ export default class VisualRegressionLauncher {
 
   async runHook(hookName, ...args) {
     if (typeof this.compare[hookName] === 'function') {
-      return await this.compare[hookName](...args)
+      return await this.compare[hookName](...args);
     }
   }
 
   validateConfig(config) {
-    if(!_.isPlainObject(config.visualRegression) || !_.has(config.visualRegression, 'compare')) {
+    if (!_.isPlainObject(config.visualRegression) || !_.has(config.visualRegression, 'compare')) {
       throw new Error('Please provide a visualRegression configuration with a compare method in your wdio-conf.js!');
     }
   }
@@ -180,7 +184,7 @@ export default class VisualRegressionLauncher {
     const baseContext = {
       type,
       browser: this.context.browser,
-      desiredCapabilities: this.context.desiredCapabilities,
+      desiredCapabilities: this.context.desiredCapabilities
     };
 
     const runHook = this.runHook.bind(this);
@@ -200,11 +204,7 @@ export default class VisualRegressionLauncher {
       const elementSelector = type === 'element' ? args[0] : undefined;
       const options = _.isPlainObject(args[args.length - 1]) ? args[args.length - 1] : {};
 
-      const {
-        exclude,
-        hide,
-        remove,
-      } = options;
+      const { exclude, hide, remove } = options;
 
       const resolutions = _.get(options, resolutionKeyPlural, resolutionDefault);
       const viewportChangePause = _.get(options, 'viewportChangePause', viewportChangePauseDefault);
@@ -214,14 +214,17 @@ export default class VisualRegressionLauncher {
         viewportChangePause,
         resolutions,
         async function takeScreenshot(resolution) {
-          const meta = _.pickBy({
-            url,
-            element: elementSelector,
-            exclude,
-            hide,
-            remove,
-            [resolutionKeySingle]: resolution
-          }, _.identity);
+          const meta = _.pickBy(
+            {
+              url,
+              element: elementSelector,
+              exclude,
+              hide,
+              remove,
+              [resolutionKeySingle]: resolution
+            },
+            _.identity
+          );
 
           const screenshotContext = {
             ...baseContext,
@@ -246,19 +249,23 @@ export default class VisualRegressionLauncher {
         }
       );
       return results;
-
-    }
+    };
   }
 
   getTestDetails() {
-    return _.pickBy({
-     // mocha
-     suite: this.currentSuite,
-     test: this.currentTest,
-     // cucumber
-     feature: this.currentFeature,
-     scenario: this.currentScenario,
-     step: this.currentStep,
-    }, _.identity);
+    return _.pickBy(
+      {
+        // mocha
+        suite: this.currentSuite,
+        test: this.currentTest,
+        // cucumber
+        feature: this.currentFeature,
+        scenario: this.currentScenario,
+        step: this.currentStep
+      },
+      _.identity
+    );
   }
 }
+
+module.exports = VisualRegressionLauncher;

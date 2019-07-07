@@ -186,10 +186,10 @@ available:
   exclude frequently changing parts of your screenshot, you can either pass all kinds of different [WebdriverIO selector strategies](http://webdriver.io/guide/usage/selectors.html)
   that queries one or multiple elements or you can define x and y values which stretch a rectangle or polygon
 
-* **hide** `String[]`<br>
+* **hide** `Object[]`<br>
   hides all elements queried by all kinds of different [WebdriverIO selector strategies](http://webdriver.io/guide/usage/selectors.html) (via `visibility: hidden`)
 
-* **remove** `String[]`<br>
+* **remove** `Object[]`<br>
   removes all elements queried by all kinds of different [WebdriverIO selector strategies](http://webdriver.io/guide/usage/selectors.html) (via `display: none`)
 
 * **viewports** `Object[{ width: Number, height: Number }]` (**desktop only**)<br>
