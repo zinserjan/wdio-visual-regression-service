@@ -15,7 +15,7 @@
     "phantom": "phantomjs --webdriver=4444",
     "build": "npm run clean && babel ./src -d lib",
     "test": "npm run test:unit && npm run test:wdio",
-    "test:unit": "npm run clean && mocha --compilers js:babel-register test/unit/**/*.test.js",
+    "test:unit": "npm run clean && mocha --require @babel/register test/unit/**/*.test.js",
     "test:wdio": "npm run build && wdio ./test/wdio/wdio.config.js",
     "test:local": "npm run clean && wdio ./test/wdio/wdio.local-conf.js",
     "prepublish": "npm run build",
@@ -31,6 +31,7 @@
   "author": "Jan-André Zinser",
   "license": "MIT",
   "dependencies": {
+    "@babel/runtime": "^7.5.1",
     "@wdio/logger": "^5.0.0",
     "babel-runtime": "^6.9.0",
     "fs-extra": "^3.0.1",

@@ -1,7 +1,5 @@
 const VisualRegressionLauncher = require('../../lib').default;
 
-require('babel-register');
-
 var path = require('path');
 
 var compareMethod = require('../helper/compareMethod');
@@ -27,7 +25,7 @@ exports.config = {
   mochaOpts: {
     ui: 'bdd',
     timeout: 60000,
-    compilers: ['js:babel-register']
+    compilers: ['js:@babel/register']
   },
   services: ['selenium-standalone'],
   before: function(capabilities, specs) {
