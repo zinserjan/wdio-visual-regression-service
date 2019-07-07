@@ -7,9 +7,7 @@ import BaseCompare from '../../../src/methods/BaseCompare';
 import { Spectre } from '../../../src/compare';
 import { createTestMethodInstance } from '../../helper/compareMethod';
 
-
 const dirFixture = path.join(__dirname, '../../fixture/');
-
 
 async function readAsBase64(file) {
   // read binary data
@@ -18,8 +16,8 @@ async function readAsBase64(file) {
   return new Buffer(content).toString('base64');
 }
 
-describe('Spectre', function () {
-  beforeEach(function () {
+describe('Spectre', function() {
+  beforeEach(function() {
     nock.disableNetConnect();
 
     this.url = 'http://localhost:3000';
@@ -33,24 +31,24 @@ describe('Spectre', function () {
     this.getSize = stub().returns(this.size);
   });
 
-  afterEach(function () {
+  afterEach(function() {
     nock.enableNetConnect();
     nock.cleanAll();
   });
 
-  it('creates a instance of BaseCompare', async function () {
+  it('creates a instance of BaseCompare', async function() {
     const instance = new Spectre({
       url: this.url,
       project: this.project,
       suite: this.suite,
       test: this.getTest,
       browser: this.getBrowser,
-      size: this.getSize,
+      size: this.getSize
     });
     assert.instanceOf(instance, BaseCompare, 'Spectre should extend BaseCompare');
   });
 
-  it('creates test run and uploads screenshots', async function () {
+  it('creates test run and uploads screenshots', async function() {
     const base64Screenshot1 = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
     const base64Screenshot2 = await readAsBase64(path.join(dirFixture, 'image/100x100-rotated.png'));
     let requestBody = null;
@@ -61,11 +59,11 @@ describe('Spectre', function () {
       suite: this.suite,
       test: this.getTest,
       browser: this.getBrowser,
-      size: this.getSize,
+      size: this.getSize
     });
 
     nock(this.url)
-      .post('/runs', function (body) {
+      .post('/runs', function(body) {
         requestBody = body;
         return true;
       })
@@ -81,7 +79,7 @@ describe('Spectre', function () {
 
     await instance.onPrepare();
 
-    assert.isNotNull(requestBody, "Request should be finished!");
+    assert.isNotNull(requestBody, 'Request should be finished!');
     assert.include(requestBody, 'name="project"');
     assert.include(requestBody, this.project);
     assert.include(requestBody, 'name="suite"');
@@ -122,12 +120,16 @@ describe('Spectre', function () {
     assert.strictEqual(this.getSize.callCount, 1, 'size getter should be called once');
     assert.isTrue(this.getSize.calledWithExactly(context), 'size getter should receive context as arg');
 
-    assert.deepEqual(resultIdentitical, {
-      misMatchPercentage: 0,
-      isWithinMisMatchTolerance: true,
-      isSameDimensions: true,
-      isExactSameImage: true
-    }, 'Result should be reported');
+    assert.deepEqual(
+      resultIdentitical,
+      {
+        misMatchPercentage: 0,
+        isWithinMisMatchTolerance: true,
+        isSameDimensions: true,
+        isExactSameImage: true
+      },
+      'Result should be reported'
+    );
 
     nock(this.url)
       .post('/tests')
@@ -139,17 +141,17 @@ describe('Spectre', function () {
         size: this.size,
         run_id: 112,
         diff: 4.56,
-        created_at: "2018-03-22T15:43:12.792Z",
-        updated_at: "2018-03-22T15:43:12.996Z",
-        screenshot_uid: "2018/03/22/396hsmk5pv_1131_test.png",
-        screenshot_baseline_uid: "2018/03/22/81gnw0lg50_1131_baseline.png",
-        screenshot_diff_uid: "2018/03/22/17alxnmrin_1131_diff.png",
-        key: "test-project-test-suite-mytest-chrome-100px",
+        created_at: '2018-03-22T15:43:12.792Z',
+        updated_at: '2018-03-22T15:43:12.996Z',
+        screenshot_uid: '2018/03/22/396hsmk5pv_1131_test.png',
+        screenshot_baseline_uid: '2018/03/22/81gnw0lg50_1131_baseline.png',
+        screenshot_diff_uid: '2018/03/22/17alxnmrin_1131_diff.png',
+        key: 'test-project-test-suite-mytest-chrome-100px',
         pass: false,
-        source_url: "",
-        fuzz_level: "30%",
-        highlight_colour: "ff00ff",
-        crop_area: "",
+        source_url: '',
+        fuzz_level: '30%',
+        highlight_colour: 'ff00ff',
+        crop_area: '',
         url: `/projects/${this.project}/suites/${this.suite}/runs/1#test_1131`
       });
 
@@ -162,12 +164,16 @@ describe('Spectre', function () {
     assert.strictEqual(this.getSize.callCount, 2, 'size getter should be called again');
     assert.isTrue(this.getSize.calledWithExactly(context), 'size getter should receive context as arg');
 
-    assert.deepEqual(resultDifferent, {
-      misMatchPercentage: 4.56,
-      isWithinMisMatchTolerance: false,
-      isSameDimensions: true,
-      isExactSameImage: false,
-    }, 'Result should be reported');
+    assert.deepEqual(
+      resultDifferent,
+      {
+        misMatchPercentage: 4.56,
+        isWithinMisMatchTolerance: false,
+        isSameDimensions: true,
+        isExactSameImage: false
+      },
+      'Result should be reported'
+    );
 
     await instance.onComplete();
   });

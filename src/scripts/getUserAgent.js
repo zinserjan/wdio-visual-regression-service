@@ -1,4 +1,3 @@
-
 /**
  * Reads the userAgent sent by your browser.
  * @return {string} userAgent string

@@ -1,12 +1,11 @@
 import fs from 'fs-extra';
 import path from 'path';
-import debug from 'debug';
+import logger from '@wdio/logger';
 
-const log = debug('wdio-visual-regression-service:BaseCompare');
+const log = logger('wdio-visual-regression-service:BaseCompare');
 const runtimeConfigPath = __dirname;
 
 export default class BaseCompare {
-
   constructor() {
     this.configs = new Map();
   }
@@ -66,38 +65,38 @@ export default class BaseCompare {
    */
   async saveRuntimeConfig(name, config) {
     const file = this.getRuntimeConfigFileName(name);
-    log(`Save runtime config ${name} to file ${file}`);
+    log.info(`Save runtime config ${name} to file ${file}`);
     await fs.writeJson(file, config, {
       spaces: 2
     });
     this.configs.set(name, config);
   }
 
-   /**
+  /**
    * Read prepared runtime config from launcher process
    */
   async getRuntimeConfig(name) {
     // try to read from cache first
     if (this.configs.has(name)) {
-      log(`Read runtime config ${name} from cache`);
+      log.info(`Read runtime config ${name} from cache`);
       return this.configs.get(name);
     }
     // otherwise read from fs
     const file = this.getRuntimeConfigFileName(name);
-    log(`Read runtime config ${name} from file ${file}`);
+    log.info(`Read runtime config ${name} from file ${file}`);
     const config = await fs.readJson(file);
     // and cache the result
     this.configs.set(name, config);
     return config;
   }
 
-   /**
+  /**
    * Remove runtime config
    */
   async removeRuntimeConfig(name) {
     // delete from fs
     const file = this.getRuntimeConfigFileName(name);
-    log(`Remove runtime config ${name} file ${file}`);
+    log.info(`Remove runtime config ${name} file ${file}`);
     await fs.remove(file);
     // delete from cache
     this.configs.delete(name);
@@ -109,7 +108,7 @@ export default class BaseCompare {
   async cleanUpRuntimeConfigs() {
     // clean up all saved config files
     const names = [...this.configs.keys()];
-    await Promise.all(names.map((n) => this.removeRuntimeConfig(n)));
+    await Promise.all(names.map(n => this.removeRuntimeConfig(n)));
   }
 
   /**
@@ -117,12 +116,16 @@ export default class BaseCompare {
    */
   getRuntimeConfigFileName(name) {
     // launcher and runner gets the same arguments, so let's use them to build a hash to determine different calls
-    const hash = require("crypto").createHash('md5').update(process.argv.slice(2).join("")).digest('hex').substring(0, 4);
+    const hash = require('crypto')
+      .createHash('md5')
+      .update(process.argv.slice(2).join(''))
+      .digest('hex')
+      .substring(0, 4);
     // try to use process id to generate a unique file name for each webdriverio instance
     const runner = global.browser != null;
-    const pid = !process.hasOwnProperty("ppid") ? null : (runner ? process.ppid : process.pid);
+    const pid = !process.hasOwnProperty('ppid') ? null : runner ? process.ppid : process.pid;
     // generate file name suffix
-    const suffix = [hash, pid].filter(Boolean).join("-");
+    const suffix = [hash, pid].filter(Boolean).join('-');
     return path.join(runtimeConfigPath, `${name}-${suffix}.json`);
   }
 
@@ -134,5 +137,4 @@ export default class BaseCompare {
       isExactSameImage: misMatchPercentage === 0
     };
   }
-
 }

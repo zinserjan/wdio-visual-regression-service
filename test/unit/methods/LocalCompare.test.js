@@ -11,7 +11,6 @@ import LocalCompare from '../../../src/methods/LocalCompare';
 const dirTmp = path.join(process.cwd(), '.tmp');
 const dirFixture = path.join(__dirname, '../../fixture/');
 
-
 async function readAsBase64(file) {
   // read binary data
   const content = await fs.readFile(file);
@@ -19,23 +18,21 @@ async function readAsBase64(file) {
   return new Buffer(content).toString('base64');
 }
 
-
-
-describe('LocalCompare', function () {
-  beforeEach(async function () {
+describe('LocalCompare', function() {
+  beforeEach(async function() {
     await fs.remove(dirTmp);
   });
 
-  after(async function () {
+  after(async function() {
     await fs.remove(dirTmp);
   });
 
-  it('creates a instance of BaseCompare', async function () {
+  it('creates a instance of BaseCompare', async function() {
     const localCompare = new LocalCompare();
     assert.instanceOf(localCompare, BaseCompare, 'LocalCompare should extend BaseCompare');
   });
 
-  context('processScreenshot', function () {
+  context('processScreenshot', function() {
     beforeEach(async function() {
       this.screenshotFile = path.join(dirTmp, 'screenshot.png');
       this.referencFile = path.join(dirTmp, 'reference.png');
@@ -48,7 +45,7 @@ describe('LocalCompare', function () {
       this.localCompare = new LocalCompare({
         screenshotName: this.getScreenshotFile,
         referenceName: this.getReferenceFile,
-        diffName: this.getDiffFile,
+        diffName: this.getDiffFile
       });
 
       this.resultIdentical = {
@@ -59,7 +56,7 @@ describe('LocalCompare', function () {
       };
     });
 
-    it('creates the captured screenshot', async function () {
+    it('creates the captured screenshot', async function() {
       const context = {};
       const base64Screenshot = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
 
@@ -67,14 +64,17 @@ describe('LocalCompare', function () {
 
       // check screenshot getter
       assert.strictEqual(this.getScreenshotFile.callCount, 1, 'Screenshot getter should be called once');
-      assert.isTrue(this.getScreenshotFile.calledWithExactly(context), 'Screenshot getter should receive context as arg');
+      assert.isTrue(
+        this.getScreenshotFile.calledWithExactly(context),
+        'Screenshot getter should receive context as arg'
+      );
 
       // check if screenshot was created
       const existsScreenshot = await fs.exists(this.screenshotFile);
       assert.isTrue(existsScreenshot, 'Captured screenshot should exist');
     });
 
-    it('creates a reference file for the first run', async function () {
+    it('creates a reference file for the first run', async function() {
       const context = {};
       const base64Screenshot = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
 
@@ -90,10 +90,9 @@ describe('LocalCompare', function () {
       // check if reference image was created
       const existsReference = await fs.exists(this.referencFile);
       assert.isTrue(existsReference, 'Reference screenshot should exist');
-
     });
 
-    it('does not update the reference image when changes are in tolerance', async function () {
+    it('does not update the reference image when changes are in tolerance', async function() {
       const context = {};
       const base64Screenshot = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
 
@@ -120,7 +119,10 @@ describe('LocalCompare', function () {
 
       // check reference getter
       assert.strictEqual(this.getReferenceFile.callCount, 2, 'Reference getter should be called once');
-      assert.isTrue(this.getReferenceFile.alwaysCalledWithExactly(context), 'Reference getter should receive context as arg');
+      assert.isTrue(
+        this.getReferenceFile.alwaysCalledWithExactly(context),
+        'Reference getter should receive context as arg'
+      );
 
       // check if image is reported as same
       assert.deepEqual(resultSecond, this.resultIdentical, 'Result should be reported');
@@ -130,7 +132,7 @@ describe('LocalCompare', function () {
       assert.strictEqual(statsSecond.mtime.getTime(), statsFirst.mtime.getTime(), 'File should not be modified');
     });
 
-    it('creates a diff image when changes are not in tolerance', async function () {
+    it('creates a diff image when changes are not in tolerance', async function() {
       const context = {};
       const base64ScreenshotReference = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
       const base64ScreenshotNew = await readAsBase64(path.join(dirFixture, 'image/100x100-rotated.png'));
@@ -175,10 +177,10 @@ describe('LocalCompare', function () {
       assert.isTrue(existsDiff, 'Diff screenshot should exists');
 
       // check if diff is correct
-      await compareImages(this.diffFile, path.join(dirFixture, 'image/100x100-diff.png'))
+      await compareImages(this.diffFile, path.join(dirFixture, 'image/100x100-diff.png'));
     });
 
-    it('deletes existing diff image when image is in tolerance now', async function () {
+    it('deletes existing diff image when image is in tolerance now', async function() {
       const base64ScreenshotReference = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
       const base64ScreenshotNew = await readAsBase64(path.join(dirFixture, 'image/100x100-rotated.png'));
 
@@ -195,7 +197,7 @@ describe('LocalCompare', function () {
       // 3rd run --> delete existing diff
       const context = {
         options: {
-            misMatchTolerance: 100,
+          misMatchTolerance: 100
         }
       };
       await this.localCompare.processScreenshot(context, base64ScreenshotNew);
@@ -204,23 +206,28 @@ describe('LocalCompare', function () {
       existsDiff = await fs.exists(this.diffFile);
       assert.isFalse(existsDiff, 'Diff screenshot should no longer exist');
     });
-
   });
 
-
-  context('misMatchTolerance', function () {
-    before(async function () {
+  context('misMatchTolerance', function() {
+    before(async function() {
       this.screenshotBase = await readAsBase64(path.join(dirFixture, 'misMatchTolerance/base.png'));
 
-      this.screenshotToleranceDefaultWithin = await readAsBase64(path.join(dirFixture, 'misMatchTolerance/default-within.png'));
-      this.screenshotToleranceDefaultOutside = await readAsBase64(path.join(dirFixture, 'misMatchTolerance/default-outside.png'));
+      this.screenshotToleranceDefaultWithin = await readAsBase64(
+        path.join(dirFixture, 'misMatchTolerance/default-within.png')
+      );
+      this.screenshotToleranceDefaultOutside = await readAsBase64(
+        path.join(dirFixture, 'misMatchTolerance/default-outside.png')
+      );
 
-      this.screenshotToleranceCustomWithin = await readAsBase64(path.join(dirFixture, 'misMatchTolerance/custom-within.png'));
-      this.screenshotToleranceCustomOutside = await readAsBase64(path.join(dirFixture, 'misMatchTolerance/custom-outside.png'));
-
+      this.screenshotToleranceCustomWithin = await readAsBase64(
+        path.join(dirFixture, 'misMatchTolerance/custom-within.png')
+      );
+      this.screenshotToleranceCustomOutside = await readAsBase64(
+        path.join(dirFixture, 'misMatchTolerance/custom-outside.png')
+      );
     });
 
-    beforeEach(async function () {
+    beforeEach(async function() {
       this.screenshotFile = path.join(dirTmp, 'screenshot.png');
       this.referencFile = path.join(dirTmp, 'reference.png');
       this.diffFile = path.join(dirTmp, 'diff.png');
@@ -230,16 +237,15 @@ describe('LocalCompare', function () {
       this.getDiffFile = stub().returns(this.diffFile);
     });
 
-
-    context('uses default misMatchTolerance', function () {
-      beforeEach(async function () {
+    context('uses default misMatchTolerance', function() {
+      beforeEach(async function() {
         this.misMatchTolerance = 0.01;
         this.context = {};
 
         this.localCompare = new LocalCompare({
           screenshotName: this.getScreenshotFile,
           referenceName: this.getReferenceFile,
-          diffName: this.getDiffFile,
+          diffName: this.getDiffFile
         });
 
         // 1st run -> create reference
@@ -250,7 +256,7 @@ describe('LocalCompare', function () {
         assert.isTrue(existsReference, 'Captured screenshot should exist');
       });
 
-      it('reports equal when in tolerance', async function () {
+      it('reports equal when in tolerance', async function() {
         // compare screenshots
         const result = await this.localCompare.processScreenshot(this.context, this.screenshotToleranceDefaultWithin);
 
@@ -264,7 +270,7 @@ describe('LocalCompare', function () {
         assert.isFalse(existsDiff, 'Diff screenshot should not exist');
       });
 
-      it('reports diff when NOT in tolerance', async function () {
+      it('reports diff when NOT in tolerance', async function() {
         // compare screenshots
         const result = await this.localCompare.processScreenshot(this.context, this.screenshotToleranceDefaultOutside);
 
@@ -279,8 +285,8 @@ describe('LocalCompare', function () {
       });
     });
 
-    context('uses custom misMatchTolerance passed in constructor option', function () {
-      beforeEach(async function () {
+    context('uses custom misMatchTolerance passed in constructor option', function() {
+      beforeEach(async function() {
         this.misMatchTolerance = 0.25;
         this.context = {};
 
@@ -288,7 +294,7 @@ describe('LocalCompare', function () {
           screenshotName: this.getScreenshotFile,
           referenceName: this.getReferenceFile,
           diffName: this.getDiffFile,
-          misMatchTolerance: this.misMatchTolerance,
+          misMatchTolerance: this.misMatchTolerance
         });
 
         // 1st run -> create reference
@@ -299,7 +305,7 @@ describe('LocalCompare', function () {
         assert.isTrue(existsReference, 'Captured screenshot should exist');
       });
 
-      it('reports equal when in tolerance', async function () {
+      it('reports equal when in tolerance', async function() {
         // compare screenshots
         const result = await this.localCompare.processScreenshot(this.context, this.screenshotToleranceCustomWithin);
 
@@ -313,7 +319,7 @@ describe('LocalCompare', function () {
         assert.isFalse(existsDiff, 'Diff screenshot should not exist');
       });
 
-      it('reports diff when NOT in tolerance', async function () {
+      it('reports diff when NOT in tolerance', async function() {
         // compare screenshots
         const result = await this.localCompare.processScreenshot(this.context, this.screenshotToleranceCustomOutside);
 
@@ -328,19 +334,19 @@ describe('LocalCompare', function () {
       });
     });
 
-    context('uses custom misMatchTolerance passed in command options', function () {
-      beforeEach(async function () {
+    context('uses custom misMatchTolerance passed in command options', function() {
+      beforeEach(async function() {
         this.misMatchTolerance = 0.25;
         this.context = {
           options: {
-            misMatchTolerance: this.misMatchTolerance,
+            misMatchTolerance: this.misMatchTolerance
           }
         };
 
         this.localCompare = new LocalCompare({
           screenshotName: this.getScreenshotFile,
           referenceName: this.getReferenceFile,
-          diffName: this.getDiffFile,
+          diffName: this.getDiffFile
         });
 
         // 1st run -> create reference
@@ -351,7 +357,7 @@ describe('LocalCompare', function () {
         assert.isTrue(existsReference, 'Captured screenshot should exist');
       });
 
-      it('reports equal when in tolerance', async function () {
+      it('reports equal when in tolerance', async function() {
         // compare screenshots
         const result = await this.localCompare.processScreenshot(this.context, this.screenshotToleranceCustomWithin);
 
@@ -365,7 +371,7 @@ describe('LocalCompare', function () {
         assert.isFalse(existsDiff, 'Diff screenshot should not exist');
       });
 
-      it('reports diff when NOT in tolerance', async function () {
+      it('reports diff when NOT in tolerance', async function() {
         // compare screenshots
         const result = await this.localCompare.processScreenshot(this.context, this.screenshotToleranceCustomOutside);
 
@@ -381,13 +387,13 @@ describe('LocalCompare', function () {
     });
   });
 
-  context('ignoreComparison', function () {
-    before(async function () {
+  context('ignoreComparison', function() {
+    before(async function() {
       this.screenshotRed = await readAsBase64(path.join(dirFixture, 'ignoreComparison/100x100-red.png'));
       this.screenshotRed2 = await readAsBase64(path.join(dirFixture, 'ignoreComparison/100x100-red2.png'));
     });
 
-    beforeEach(async function () {
+    beforeEach(async function() {
       this.screenshotFile = path.join(dirTmp, 'screenshot.png');
       this.referencFile = path.join(dirTmp, 'reference.png');
       this.diffFile = path.join(dirTmp, 'diff.png');
@@ -397,15 +403,14 @@ describe('LocalCompare', function () {
       this.getDiffFile = stub().returns(this.diffFile);
     });
 
-
-    context('uses default ignoreComparison', function () {
-      beforeEach(async function () {
+    context('uses default ignoreComparison', function() {
+      beforeEach(async function() {
         this.context = {};
 
         this.localCompare = new LocalCompare({
           screenshotName: this.getScreenshotFile,
           referenceName: this.getReferenceFile,
-          diffName: this.getDiffFile,
+          diffName: this.getDiffFile
         });
 
         // 1st run -> create reference
@@ -416,7 +421,7 @@ describe('LocalCompare', function () {
         assert.isTrue(existsReference, 'Captured screenshot should exist');
       });
 
-      it('reports diff when colors differs', async function () {
+      it('reports diff when colors differs', async function() {
         // compare screenshots
         const result = await this.localCompare.processScreenshot(this.context, this.screenshotRed2);
 
@@ -431,8 +436,8 @@ describe('LocalCompare', function () {
       });
     });
 
-    context('uses custom ignoreComparison passed in constructor option', function () {
-      beforeEach(async function () {
+    context('uses custom ignoreComparison passed in constructor option', function() {
+      beforeEach(async function() {
         this.ignoreComparison = 'colors';
         this.context = {};
 
@@ -440,7 +445,7 @@ describe('LocalCompare', function () {
           screenshotName: this.getScreenshotFile,
           referenceName: this.getReferenceFile,
           diffName: this.getDiffFile,
-          ignoreComparison: this.ignoreComparison,
+          ignoreComparison: this.ignoreComparison
         });
 
         // 1st run -> create reference
@@ -451,7 +456,7 @@ describe('LocalCompare', function () {
         assert.isTrue(existsReference, 'Captured screenshot should exist');
       });
 
-      it('reports equal with ignoreComparison=colors when colors differs', async function () {
+      it('reports equal with ignoreComparison=colors when colors differs', async function() {
         // compare screenshots
         const result = await this.localCompare.processScreenshot(this.context, this.screenshotRed2);
         // check diff results
@@ -464,19 +469,19 @@ describe('LocalCompare', function () {
       });
     });
 
-    context('uses custom ignoreComparison passed in command options', function () {
-      beforeEach(async function () {
+    context('uses custom ignoreComparison passed in command options', function() {
+      beforeEach(async function() {
         this.ignoreComparison = 'colors';
         this.context = {
           options: {
-            ignoreComparison: this.ignoreComparison,
+            ignoreComparison: this.ignoreComparison
           }
         };
 
         this.localCompare = new LocalCompare({
           screenshotName: this.getScreenshotFile,
           referenceName: this.getReferenceFile,
-          diffName: this.getDiffFile,
+          diffName: this.getDiffFile
         });
 
         // 1st run -> create reference
@@ -487,7 +492,7 @@ describe('LocalCompare', function () {
         assert.isTrue(existsReference, 'Captured screenshot should exist');
       });
 
-      it('reports equal with ignoreComparison=colors when colors differs', async function () {
+      it('reports equal with ignoreComparison=colors when colors differs', async function() {
         // compare screenshots
         const result = await this.localCompare.processScreenshot(this.context, this.screenshotRed2);
 

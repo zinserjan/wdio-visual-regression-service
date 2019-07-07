@@ -41,7 +41,6 @@ function assertScreenshotContext(options, type, screenshotContext) {
   assert.deepEqual(screenshotContext.options, options);
 }
 
-
 function assertBrowser(browser) {
   assert.isObject(browser, 'browser must be an object');
   // test browser property
@@ -54,7 +53,6 @@ function assertBrowser(browser) {
   assert.property(browser, 'userAgent');
   assert.isString(browser.userAgent);
 }
-
 
 function assertDesiredCapabilities(desiredCapabilities) {
   assert.isObject(desiredCapabilities, 'desiredCapabilities must be an object');
@@ -73,7 +71,6 @@ function assertTest(test) {
   assert.isString(test.file);
 }
 
-
 function assertMeta(meta, type, options) {
   assert.isObject(meta, 'meta must be an object');
 
@@ -82,7 +79,10 @@ function assertMeta(meta, type, options) {
 
   if (type === TYPE_ELEMENT) {
     assert.property(meta, 'element');
-    assert.isTrue(typeof meta.element === 'string' || Array.isArray(meta.element), 'element should be a string or array');
+    assert.isTrue(
+      typeof meta.element === 'string' || Array.isArray(meta.element),
+      'element should be a string or array'
+    );
   }
 
   if (typeof options.exclude !== 'undefined') {
@@ -111,10 +111,8 @@ function assertMeta(meta, type, options) {
   }
 }
 
-
-describe('VisualRegressionLauncher - custom compare method & hooks', function () {
-
-  beforeEach(function () {
+describe('VisualRegressionLauncher - custom compare method & hooks', function() {
+  beforeEach(function() {
     const { before, beforeScreenshot, afterScreenshot, processScreenshot, after } = compareStubs;
 
     this.beforeStub = before;
@@ -136,14 +134,13 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
       isSameDimensions: true,
       isExactSameImage: false
     };
-
   });
 
-  it.skip('calls onPrepare hook', async function () {
+  it.skip('calls onPrepare hook', async function() {
     // untestable cause this will be executed before tests on launcher process :D
   });
 
-  it('calls before hook', async function () {
+  it('calls before hook', async function() {
     assert.isTrue(this.beforeStub.calledOnce, 'before hook should be called once');
     const beforeArgs = this.beforeStub.args[0];
     assert.lengthOf(beforeArgs, 1, 'before hook should receive 1 argument');
@@ -163,8 +160,7 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     assert.isArray(specs);
   });
 
-
-  it('calls beforeScreenshot hook', async function () {
+  it('calls beforeScreenshot hook', async function() {
     assert.isTrue(this.beforeScreenshotStub.notCalled);
 
     const options = {};
@@ -184,8 +180,7 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     assertScreenshotContext(options, TYPE_DOCUMENT, screenshotContext);
   });
 
-
-  it('calls afterScreenshot hook', async function () {
+  it('calls afterScreenshot hook', async function() {
     assert.isTrue(this.afterScreenshotStub.notCalled);
 
     const options = {};
@@ -205,7 +200,7 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     assert.isString(base64Screenshot, 'Screenshot should be a base64 string');
   });
 
-  it('calls processScreenshot hook', async function () {
+  it('calls processScreenshot hook', async function() {
     assert.isTrue(this.processScreenshotStub.notCalled);
 
     const options = {};
@@ -225,16 +220,16 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     assert.isString(base64Screenshot, 'Screenshot should be a base64 string');
   });
 
-  it.skip('calls onComplete hook', function () {
+  it.skip('calls onComplete hook', function() {
     // untestable cause this will be executed after tests on launcher process :D
   });
 
-  it('returns result from processScreenshot hook', async function () {
+  it('returns result from processScreenshot hook', async function() {
     const expectedResult = {
       misMatchPercentage: 10.05,
       isWithinMisMatchTolerance: false,
       isSameDimensions: true,
-      isExactSameImage: true,
+      isExactSameImage: true
     };
 
     this.processScreenshotStub.returns(expectedResult);
@@ -250,49 +245,53 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
     assert.strictEqual(result, expectedResult);
   });
 
-  context('viewportChangePause', function () {
-
-    beforeEach(function () {
+  context('viewportChangePause', function() {
+    beforeEach(function() {
       spy(browser, 'pause');
       spy(browser, 'setViewportSize');
     });
 
-    afterEach(function () {
+    afterEach(function() {
       browser.pause.restore();
       browser.setViewportSize.restore();
     });
 
-    it('uses a custom delay passed in constructor options', async function () {
+    it('uses a custom delay passed in constructor options', async function() {
       await browser.checkViewport({
-        viewports: [{ width: 500, height: 1000 }],
+        viewports: [{ width: 500, height: 1000 }]
       });
 
-      assert.isTrue(browser.pause.calledAfter(browser.setViewportSize), 'browser.pause should have been after setViewportSize');
+      assert.isTrue(
+        browser.pause.calledAfter(browser.setViewportSize),
+        'browser.pause should have been after setViewportSize'
+      );
       assert.isTrue(browser.pause.calledWith(250), 'browser.pause should have been called called with 250');
     });
 
-    it('uses a custom delay passed in command options', async function () {
+    it('uses a custom delay passed in command options', async function() {
       await browser.checkViewport({
         viewports: [{ width: 500, height: 1000 }],
-        viewportChangePause: 1500,
+        viewportChangePause: 1500
       });
 
-      assert.isTrue(browser.pause.calledAfter(browser.setViewportSize), 'browser.pause should have been called after setViewportSize');
+      assert.isTrue(
+        browser.pause.calledAfter(browser.setViewportSize),
+        'browser.pause should have been called after setViewportSize'
+      );
       assert.isTrue(browser.pause.calledWith(1500), 'browser.pause should have been called with 1500');
     });
   });
 
-  context('viewports', function () {
-
-    beforeEach(function () {
+  context('viewports', function() {
+    beforeEach(function() {
       spy(browser, 'setViewportSize');
     });
 
-    afterEach(function () {
+    afterEach(function() {
       browser.setViewportSize.restore();
     });
 
-    it('uses viewport passed in constructor options', async function () {
+    it('uses viewport passed in constructor options', async function() {
       const expectedViewport = browser.options.visualRegression.viewports[0];
       await browser.checkViewport();
 
@@ -300,11 +299,11 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
       assert.deepEqual(viewport, expectedViewport, 'browser.setViewportSize should have been called with global value');
     });
 
-    it('uses a custom viewport passed in command options', async function () {
+    it('uses a custom viewport passed in command options', async function() {
       const expectedViewport = { width: 500, height: 600 };
 
       await browser.checkViewport({
-        viewports: [expectedViewport],
+        viewports: [expectedViewport]
       });
 
       const viewport = browser.setViewportSize.args[0][0];
@@ -318,6 +317,4 @@ describe('VisualRegressionLauncher - custom compare method & hooks', function ()
   //   const afterArgs = this.afterStub.args[0];
   //   assert.lengthOf(afterArgs, 0, 'after hook shouldnt receive arguments');
   // });
-
-
 });

@@ -9,7 +9,6 @@ import SaveScreenshot from '../../../src/methods/SaveScreenshot';
 const dirTmp = path.join(process.cwd(), '.tmp');
 const dirFixture = path.join(__dirname, '../../fixture/');
 
-
 async function readAsBase64(file) {
   // read binary data
   const content = await fs.readFile(file);
@@ -17,34 +16,33 @@ async function readAsBase64(file) {
   return new Buffer(content).toString('base64');
 }
 
-
 function pause(ms) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     setTimeout(resolve, ms);
   });
 }
 
-describe('SaveScreenshot', function () {
-  beforeEach(async function () {
+describe('SaveScreenshot', function() {
+  beforeEach(async function() {
     await fs.remove(dirTmp);
   });
 
-  after(async function () {
+  after(async function() {
     await fs.remove(dirTmp);
   });
 
-  it('creates a instance of BaseCompare', async function () {
+  it('creates a instance of BaseCompare', async function() {
     const saveScreenshot = new SaveScreenshot();
     assert.instanceOf(saveScreenshot, BaseCompare, 'SaveScreenshot should extend BaseCompare');
   });
 
-  context('processScreenshot', function () {
+  context('processScreenshot', function() {
     beforeEach(async function() {
       this.referencFile = path.join(dirTmp, 'reference.png');
       this.getReferenceFile = stub().returns(this.referencFile);
 
       this.saveScreenshot = new SaveScreenshot({
-        screenshotName: this.getReferenceFile,
+        screenshotName: this.getReferenceFile
       });
 
       this.resultIdentical = {
@@ -55,7 +53,7 @@ describe('SaveScreenshot', function () {
       };
     });
 
-    it('creates a reference file for the first run', async function () {
+    it('creates a reference file for the first run', async function() {
       const context = {};
       const base64Screenshot = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
 
@@ -71,10 +69,9 @@ describe('SaveScreenshot', function () {
       // check if reference image was created
       const existsReference = await fs.exists(this.referencFile);
       assert.isTrue(existsReference, 'Reference screenshot should exist');
-
     });
 
-    it('updates the reference image when changes are in tolerance', async function () {
+    it('updates the reference image when changes are in tolerance', async function() {
       const context = {};
       const base64Screenshot = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
 
@@ -104,7 +101,10 @@ describe('SaveScreenshot', function () {
 
       // check reference getter
       assert.strictEqual(this.getReferenceFile.callCount, 2, 'Reference getter should be called once');
-      assert.isTrue(this.getReferenceFile.alwaysCalledWithExactly(context), 'Reference getter should receive context as arg');
+      assert.isTrue(
+        this.getReferenceFile.alwaysCalledWithExactly(context),
+        'Reference getter should receive context as arg'
+      );
 
       // check if image is reported as same
       assert.deepEqual(resultSecond, this.resultIdentical, 'Result should be reported');
@@ -114,7 +114,7 @@ describe('SaveScreenshot', function () {
       assert.isAbove(statsSecond.mtime.getTime(), statsFirst.mtime.getTime(), 'File should be modified');
     });
 
-    it('updates the reference image when changes are not in tolerance', async function () {
+    it('updates the reference image when changes are not in tolerance', async function() {
       const context = {};
       const base64ScreenshotReference = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
       const base64ScreenshotNew = await readAsBase64(path.join(dirFixture, 'image/100x100-rotated.png'));
@@ -145,7 +145,10 @@ describe('SaveScreenshot', function () {
 
       // check reference getter
       assert.strictEqual(this.getReferenceFile.callCount, 2, 'Reference getter should be called once');
-      assert.isTrue(this.getReferenceFile.alwaysCalledWithExactly(context), 'Reference getter should receive context as arg');
+      assert.isTrue(
+        this.getReferenceFile.alwaysCalledWithExactly(context),
+        'Reference getter should receive context as arg'
+      );
 
       // check if image is reported as same (we don't care about the results here, as we are just overwriting all reference screenshots)
       assert.deepEqual(resultSecond, this.resultIdentical, 'Result should be reported');
@@ -154,6 +157,5 @@ describe('SaveScreenshot', function () {
       const statsSecond = await fs.stat(this.referencFile);
       assert.isAbove(statsSecond.mtime.getTime(), statsFirst.mtime.getTime(), 'File should be modified');
     });
-
   });
 });

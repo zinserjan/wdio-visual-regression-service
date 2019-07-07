@@ -1,13 +1,12 @@
 import fs from 'fs-extra';
 import resemble from 'node-resemble-js';
 import BaseCompare from './BaseCompare';
-import debug from 'debug';
+import logger from '@wdio/logger';
 import _ from 'lodash';
 
-const log = debug('wdio-visual-regression-service:LocalCompare');
+const log = logger('wdio-visual-regression-service:LocalCompare');
 
 export default class LocalCompare extends BaseCompare {
-
   constructor(options = {}) {
     super();
     this.getScreenshotFile = options.screenshotName;
@@ -26,8 +25,8 @@ export default class LocalCompare extends BaseCompare {
     const referenceExists = await fs.exists(referencePath);
 
     if (referenceExists) {
-      log('reference exists, compare it with the taken now');
-      const captured = new Buffer(base64Screenshot, 'base64');
+      log.info('reference exists, compare it with the taken now');
+      const captured = new Buffer.from(base64Screenshot, 'base64');
       const ignoreComparison = _.get(context, 'options.ignoreComparison', this.ignoreComparison);
 
       const compareData = await this.compareImages(referencePath, captured, ignoreComparison);
@@ -39,20 +38,19 @@ export default class LocalCompare extends BaseCompare {
       const diffPath = this.getDiffFile(context);
 
       if (misMatchPercentage > misMatchTolerance) {
-        log(`Image is different! ${misMatchPercentage}%`);
+        log.info(`Image is different! ${misMatchPercentage}%`);
         const png = compareData.getDiffImage().pack();
         await this.writeDiff(png, diffPath);
 
         return this.createResultReport(misMatchPercentage, false, isSameDimensions);
       } else {
-        log(`Image is within tolerance or the same`);
+        log.info(`Image is within tolerance or the same`);
         await fs.remove(diffPath);
 
         return this.createResultReport(misMatchPercentage, true, isSameDimensions);
       }
-
     } else {
-      log('first run - create reference file');
+      log.info('first run - create reference file');
       await fs.outputFile(referencePath, base64Screenshot, 'base64');
       return this.createResultReport(0, true, true);
     }
@@ -65,10 +63,10 @@ export default class LocalCompare extends BaseCompare {
    * @return {{misMatchPercentage: Number, isSameDimensions:Boolean, getImageDataUrl: function}}
    */
   async compareImages(reference, screenshot, ignore = '') {
-    return await new Promise((resolve) => {
+    return await new Promise(resolve => {
       const image = resemble(reference).compareTo(screenshot);
 
-      switch(ignore) {
+      switch (ignore) {
         case 'colors':
           image.ignoreColors();
           break;
@@ -77,12 +75,11 @@ export default class LocalCompare extends BaseCompare {
           break;
       }
 
-      image.onComplete((data) => {
+      image.onComplete(data => {
         resolve(data);
       });
     });
   }
-
 
   /**
    * Writes provided diff by resemble as png
@@ -98,15 +95,12 @@ export default class LocalCompare extends BaseCompare {
       png.on('end', () => {
         const buffer = Buffer.concat(chunks);
 
-        Promise
-        .resolve()
-        .then(() => fs.outputFile(filepath, buffer.toString('base64'), 'base64'))
-        .then(() => resolve())
-        .catch(reject);
+        Promise.resolve()
+          .then(() => fs.outputFile(filepath, buffer.toString('base64'), 'base64'))
+          .then(() => resolve())
+          .catch(reject);
       });
-      png.on('error', (err) => reject(err));
+      png.on('error', err => reject(err));
     });
   }
-
-
 }

@@ -1,21 +1,18 @@
-require("babel-register");
+const VisualRegressionLauncher = require('../../lib').default;
 
 var path = require('path');
 
 var compareMethod = require('../helper/compareMethod');
 
 exports.config = {
-  specs: [
-    path.join(__dirname, '*.test.js')
-  ],
+  specs: [path.join(__dirname, '*.test.js')],
   capabilities: [
     {
-      browserName: 'phantomjs',
-      'phantomjs.binary.path': require('phantomjs').path,
+      browserName: 'firefox'
     }
   ],
   sync: false,
-  logLevel: 'silent',
+  logLevel: 'info',
   coloredLogs: true,
 
   baseUrl: 'http://webdriver.io',
@@ -28,20 +25,18 @@ exports.config = {
   mochaOpts: {
     ui: 'bdd',
     timeout: 60000,
-    compilers: [
-      'js:babel-register'
-    ],
+    compilers: ['js:@babel/register']
   },
-  services: [
-    'selenium-standalone',
-    require('../../src')
-  ],
+  services: ['selenium-standalone'],
+  before: function(capabilities, specs) {
+    return new VisualRegressionLauncher().before(capabilities, specs);
+  },
   visualRegression: {
     compare: compareMethod,
     viewportChangePause: 250,
-    viewports: [{ width: 600, height: 1000 }],
+    viewports: [{ width: 600, height: 1000 }]
   },
   // Options for selenium-standalone
   // Path where all logs from the Selenium server should be stored.
-  seleniumLogs: './logs/',
-}
+  seleniumLogs: './logs/'
+};
