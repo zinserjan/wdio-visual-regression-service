@@ -58,15 +58,15 @@ describe('LocalCompare', function () {
         isExactSameImage: true,
         isNewScreenshot: false
       };
-    });
 
-    this.resultNewFile = {
-      misMatchPercentage: 0,
-      isWithinMisMatchTolerance: true,
-      isSameDimensions: true,
-      isExactSameImage: true
-    };
-  });
+      this.resultNewFile = {
+        misMatchPercentage: 0,
+        isWithinMisMatchTolerance: true,
+        isSameDimensions: true,
+        isExactSameImage: true,
+        isNewScreenshot: true
+      };
+    });
 
   it('creates the captured screenshot', async function () {
       const context = {};

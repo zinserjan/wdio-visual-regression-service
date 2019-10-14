@@ -51,7 +51,16 @@ describe('SaveScreenshot', function () {
         misMatchPercentage: 0,
         isWithinMisMatchTolerance: true,
         isSameDimensions: true,
-        isExactSameImage: true
+        isExactSameImage: true,
+        isNewScreenshot: false
+      };
+
+      this.resultNewFile = {
+        misMatchPercentage: 0,
+        isWithinMisMatchTolerance: true,
+        isSameDimensions: true,
+        isExactSameImage: true,
+        isNewScreenshot: true
       };
     });
 
@@ -66,7 +75,7 @@ describe('SaveScreenshot', function () {
       assert.isTrue(this.getReferenceFile.calledWithExactly(context), 'Reference getter should receive context as arg');
 
       // check image results
-      assert.deepEqual(results, this.resultIdentical, 'Result should be reported');
+      assert.deepEqual(results, this.resultNewFile, 'Result should be reported');
 
       // check if reference image was created
       const existsReference = await fs.exists(this.referencFile);

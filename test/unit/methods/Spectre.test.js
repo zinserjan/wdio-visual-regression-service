@@ -126,7 +126,8 @@ describe('Spectre', function () {
       misMatchPercentage: 0,
       isWithinMisMatchTolerance: true,
       isSameDimensions: true,
-      isExactSameImage: true
+      isExactSameImage: true,
+      isNewScreenshot: undefined,
     }, 'Result should be reported');
 
     nock(this.url)
@@ -167,6 +168,7 @@ describe('Spectre', function () {
       isWithinMisMatchTolerance: false,
       isSameDimensions: true,
       isExactSameImage: false,
+      isNewScreenshot: undefined,
     }, 'Result should be reported');
 
     await instance.onComplete();
