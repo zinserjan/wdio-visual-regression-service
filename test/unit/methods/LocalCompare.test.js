@@ -114,7 +114,7 @@ describe('LocalCompare', function () {
       assert.isTrue(this.getReferenceFile.calledWithExactly(context), 'Reference getter should receive context as arg');
 
       // check image results
-      assert.deepEqual(resultFirst, this.resultIdentical, 'Result should be reported');
+      assert.deepEqual(resultFirst, this.resultNewFile, 'Result should be reported');
 
       // check if reference was created
       const existsReference = await fs.exists(this.screenshotFile);
@@ -152,7 +152,7 @@ describe('LocalCompare', function () {
       assert.isTrue(this.getReferenceFile.calledWithExactly(context), 'Reference getter should receive context as arg');
 
       // check image results
-      assert.deepEqual(resultFirst, this.resultIdentical, 'Result should be reported');
+      assert.deepEqual(resultFirst, this.resultNewFile, 'Result should be reported');
 
       // check if reference was created
       const existsReference = await fs.exists(this.screenshotFile);
