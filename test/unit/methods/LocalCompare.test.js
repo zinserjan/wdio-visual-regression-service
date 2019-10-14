@@ -55,11 +55,20 @@ describe('LocalCompare', function () {
         misMatchPercentage: 0,
         isWithinMisMatchTolerance: true,
         isSameDimensions: true,
-        isExactSameImage: true
+        isExactSameImage: true,
+        isNewScreenshot: false
+      };
+
+      this.resultNewFile = {
+        misMatchPercentage: 0,
+        isWithinMisMatchTolerance: true,
+        isSameDimensions: true,
+        isExactSameImage: true,
+        isNewScreenshot: true
       };
     });
 
-    it('creates the captured screenshot', async function () {
+  it('creates the captured screenshot', async function () {
       const context = {};
       const base64Screenshot = await readAsBase64(path.join(dirFixture, 'image/100x100.png'));
 
@@ -85,7 +94,7 @@ describe('LocalCompare', function () {
       assert.isTrue(this.getReferenceFile.calledWithExactly(context), 'Reference getter should receive context as arg');
 
       // check image results
-      assert.deepEqual(results, this.resultIdentical, 'Result should be reported');
+      assert.deepEqual(results, this.resultNewFile, 'Result should be reported');
 
       // check if reference image was created
       const existsReference = await fs.exists(this.referencFile);
@@ -105,7 +114,7 @@ describe('LocalCompare', function () {
       assert.isTrue(this.getReferenceFile.calledWithExactly(context), 'Reference getter should receive context as arg');
 
       // check image results
-      assert.deepEqual(resultFirst, this.resultIdentical, 'Result should be reported');
+      assert.deepEqual(resultFirst, this.resultNewFile, 'Result should be reported');
 
       // check if reference was created
       const existsReference = await fs.exists(this.screenshotFile);
@@ -143,7 +152,7 @@ describe('LocalCompare', function () {
       assert.isTrue(this.getReferenceFile.calledWithExactly(context), 'Reference getter should receive context as arg');
 
       // check image results
-      assert.deepEqual(resultFirst, this.resultIdentical, 'Result should be reported');
+      assert.deepEqual(resultFirst, this.resultNewFile, 'Result should be reported');
 
       // check if reference was created
       const existsReference = await fs.exists(this.screenshotFile);
@@ -165,6 +174,7 @@ describe('LocalCompare', function () {
       assert.isFalse(resultSecond.isExactSameImage, 'Images should diff');
       assert.isFalse(resultSecond.isWithinMisMatchTolerance, 'Images should be marked as diff');
       assert.isTrue(resultSecond.isSameDimensions, 'Image dimensioms should be the same');
+      assert.isFalse(resultSecond.isNewScreenshot, 'Image should not be new screenshot')
 
       // check if reference is still the same
       const statsSecond = await fs.stat(this.referencFile);
@@ -272,6 +282,7 @@ describe('LocalCompare', function () {
         assert.isAbove(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
         assert.isFalse(result.isExactSameImage, 'Images should diff');
         assert.isFalse(result.isWithinMisMatchTolerance, 'Images should be marked as diff');
+        assert.isFalse(result.isNewScreenshot, 'Image should not be new screenshot');
 
         // check if diff image was created
         const existsDiff = await fs.exists(this.diffFile);
@@ -307,6 +318,7 @@ describe('LocalCompare', function () {
         assert.isAtMost(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
         assert.isFalse(result.isExactSameImage, 'Images should diff');
         assert.isTrue(result.isWithinMisMatchTolerance, 'Diff should be in tolerance');
+        assert.isFalse(result.isNewScreenshot, 'Image should not be new screenshot');
 
         // check if diff image was not created
         const existsDiff = await fs.exists(this.diffFile);
@@ -321,6 +333,7 @@ describe('LocalCompare', function () {
         assert.isAbove(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
         assert.isFalse(result.isExactSameImage, 'Images should diff');
         assert.isFalse(result.isWithinMisMatchTolerance, 'Images should be marked as diff');
+        assert.isFalse(result.isNewScreenshot, 'Image should not be new screenshot');
 
         // check if diff image was created
         const existsDiff = await fs.exists(this.diffFile);
@@ -359,6 +372,7 @@ describe('LocalCompare', function () {
         assert.isAtMost(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
         assert.isFalse(result.isExactSameImage, 'Images should diff');
         assert.isTrue(result.isWithinMisMatchTolerance, 'Diff should be in tolerance');
+        assert.isFalse(result.isNewScreenshot, 'Image should not be new screenshot');
 
         // check if diff image was not created
         const existsDiff = await fs.exists(this.diffFile);
@@ -373,6 +387,7 @@ describe('LocalCompare', function () {
         assert.isAbove(result.misMatchPercentage, this.misMatchTolerance, 'Images should diff');
         assert.isFalse(result.isExactSameImage, 'Images should diff');
         assert.isFalse(result.isWithinMisMatchTolerance, 'Images should be marked as diff');
+        assert.isFalse(result.isNewScreenshot, 'Image should not be new screenshot');
 
         // check if diff image was created
         const existsDiff = await fs.exists(this.diffFile);
@@ -424,6 +439,7 @@ describe('LocalCompare', function () {
         assert.isAbove(result.misMatchPercentage, 0, 'Images should diff');
         assert.isFalse(result.isExactSameImage, 'Images should diff');
         assert.isFalse(result.isWithinMisMatchTolerance, 'Diff should not be in tolerance');
+        assert.isFalse(result.isNewScreenshot, 'Image should not be new screenshot');
 
         // check if diff image was created
         const existsDiff = await fs.exists(this.diffFile);
@@ -457,6 +473,7 @@ describe('LocalCompare', function () {
         // check diff results
         assert.isTrue(result.isExactSameImage, 'Images should not diff');
         assert.isTrue(result.isWithinMisMatchTolerance, 'Diff should be in tolerance');
+        assert.isFalse(result.isNewScreenshot, 'Image should not be new screenshot');
 
         // check if diff image was not created
         const existsDiff = await fs.exists(this.diffFile);
@@ -494,6 +511,7 @@ describe('LocalCompare', function () {
         // check diff results
         assert.isTrue(result.isExactSameImage, 'Images should not diff');
         assert.isTrue(result.isWithinMisMatchTolerance, 'Diff should be in tolerance');
+        assert.isFalse(result.isNewScreenshot, 'Image should not be new screenshot');
 
         // check if diff image was not created
         const existsDiff = await fs.exists(this.diffFile);

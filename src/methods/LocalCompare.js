@@ -43,18 +43,18 @@ export default class LocalCompare extends BaseCompare {
         const png = compareData.getDiffImage().pack();
         await this.writeDiff(png, diffPath);
 
-        return this.createResultReport(misMatchPercentage, false, isSameDimensions);
+        return this.createResultReport(misMatchPercentage, false, isSameDimensions, false);
       } else {
         log(`Image is within tolerance or the same`);
         await fs.remove(diffPath);
 
-        return this.createResultReport(misMatchPercentage, true, isSameDimensions);
+        return this.createResultReport(misMatchPercentage, true, isSameDimensions, false);
       }
 
     } else {
       log('first run - create reference file');
       await fs.outputFile(referencePath, base64Screenshot, 'base64');
-      return this.createResultReport(0, true, true);
+      return this.createResultReport(0, true, true, true);
     }
   }
 
